@@ -10,17 +10,6 @@ This monorepo contains
 1. [Grid](https://github.com/rowsncolumns/grid/tree/master/packages/grid) - MIT Licensed Declarative Canvas Grid. Refer to [Storybook](https://rowsncolumns.github.io/grid) for all demos.
 
 
-2. [SpreadSheet](https://github.com/rowsncolumns/grid/tree/master/packages/spreadsheet) - Excel-like Grid available as Non-commercial and Commercially licensed product
-
-3. [Exporter](https://github.com/rowsncolumns/grid/tree/master/packages/export) - Excel Export plugin
-
-
-### SpreadSheet Grid Documentation
-
-If you are looking for documentation of SpreadSheet Grid, its here
-
-[https://rowsncolumns.app/](https://rowsncolumns.app/)
-
 ## Local development
 
 The monorepo is managed using `lerna` and `yarn` workspaces. To get started
@@ -53,7 +42,7 @@ yarn build
 yarn storybook
 ```
 
-And open `http://localhost:9002/` in Chrome and click on `SpreadSheet` section on the left navigation
+And open `http://localhost:9002/` in Chrome
 
 All `stories` are located in `packages/storybook` directory
 
