@@ -1,0 +1,64 @@
+{
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "examples/*",
+      "hooks/*"
+    ],
+    "nohoist": [
+      "packages/storybook"
+    ]
+  },
+  "scripts": {
+    "storybook": "lerna run storybook --stream",
+    "docs:start": "cd packages/website; yarn docs:start",
+    "docs:build": "cd packages/website; yarn docs:build;",
+    "docs:deploy": "cd packages/website; yarn docs:build; vercel --prod",
+    "build": "lerna run build",
+    "build:watch": "lerna run build:watch --stream --concurrency 20 --parallel",
+    "test": "lerna run test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn test && lint-staged && yarn build"
+    }
+  },
+  "lint-staged": {
+    "**/*.+(js|jsx|ts|tsx)": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
+    "@babel/preset-typescript": "^7.9.0",
+    "@storybook/react": "^6.0.13",
+    "@storybook/storybook-deployer": "^2.8.6",
+    "@testing-library/react": "^10.0.4",
+    "@testing-library/react-hooks": "^3.2.1",
+    "@types/jest": "^26.0.0",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "babel-loader": "^8.1.0",
+    "canvas": "^2.6.1",
+    "husky": "^4.2.5",
+    "jest": "^26.0.1",
+    "lerna": "^3.20.2",
+    "lint-staged": "^10.2.4",
+    "prettier": "^2.0.5",
+    "react-docgen-typescript-loader": "^3.7.2",
+    "react-test-renderer": "^16.13.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.0.2"
+  },
+  "resolutions": {
+    "prettier": "^2.0.5"
+  },
+  "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.10.5",
+    "@babel/runtime": "^7.10.5"
+  }
+}

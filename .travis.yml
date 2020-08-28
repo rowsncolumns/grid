@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - 10
+addons:
+  apt:
+    packages:
+      # Ubuntu 16+ does not install this dependency by default, so we need to install it ourselves
+      - libgconf-2-4
+before_script:
+  - yarn
+script:
+  - yarn build
+  - yarn test 
+  - yarn workspace @rowsncolumns/spreadsheet run test:ci

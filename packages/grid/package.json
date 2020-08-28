@@ -1,0 +1,47 @@
+{
+  "name": "@rowsncolumns/grid",
+  "description": "Declarative React Canvas Grid primitive for Data table, Pivot table, Excel Worksheets",
+  "version": "6.2.2",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsc -b",
+    "build:watch": "tsc -p . --watch",
+    "check:types": "tsc --noEmit",
+    "prepublish": "yarn build",
+    "prettier": "prettier src/**/*.{ts,tsx} --write",
+    "test": "jest",
+    "precommit": "yarn test && yarn check:types"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Vinay M <rmdort@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rowsncolumns/grid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rowsncolumns/grid/issues"
+  },
+  "dependencies": {
+    "@types/scroller": "^0.1.1",
+    "konva": "^7.0.4",
+    "react-konva": "^16.13.0-5",
+    "scroller": "^0.0.3",
+    "tiny-invariant": "^1.1.0"
+  },
+  "peerDependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "gitHead": "272c80dcd474a9346b6927b356d37917cfcd7c84"
+}

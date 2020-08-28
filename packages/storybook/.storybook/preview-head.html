@@ -1,0 +1,36 @@
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style type="text/css">
+  body {
+    margin: 0;
+    padding: 0;    
+  }
+  html, body {
+    min-height: 100%;
+  }
+  * {
+    box-sizing:border-box;
+  }
+</style>
+<!-- <link rel="stylesheet" href='https://unpkg.com/tailwindcss@1.1.2/dist/base.css' /> -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="//rawgit.com/mrdoob/stats.js/master/build/stats.min.js"></script>
+<!-- <script src="https://unpkg.com/tocca@2.0.9/Tocca.js"></script> -->
+<script>
+  window.onload = function () {
+    var stats = new Stats();
+    stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild( stats.dom );
+    function animate() {
+        stats.begin();
+        // monitored code goes here
+        stats.end();
+        requestAnimationFrame( animate );
+    }
+
+    requestAnimationFrame( animate );
+    stats.dom.style.right = '0';
+    stats.dom.style.bottom = '0';
+    stats.dom.style.top = 'initial';
+    stats.dom.style.left = 'initial';
+  }
+</script>

@@ -1,0 +1,14 @@
+{
+  "packages": [
+    "packages/*",
+    "examples/*",
+    "hooks/*"
+  ],
+  "command": {
+    "publish": {
+    }
+  },
+  "useWorkspaces": true,
+  "version": "independent",
+  "npmClient": "yarn"
+}

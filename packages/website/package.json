@@ -1,0 +1,44 @@
+{
+  "name": "website",
+  "version": "6.0.4",
+  "private": true,
+  "scripts": {
+    "docs:start": "docusaurus start",
+    "docs:build": "docusaurus build",
+    "docs:swizzle": "docusaurus swizzle",
+    "docs:deploy": "docusaurus deploy",
+    "babel:api": "webpack"
+  },
+  "dependencies": {
+    "@babel/cli": "^7.10.4",
+    "@babel/core": "^7.10.4",
+    "@chakra-ui/core": "^0.8.0",
+    "@docusaurus/core": "^2.0.0-alpha.58",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.58",
+    "@emotion/core": "^10.0.28",
+    "@emotion/styled": "^10.0.27",
+    "@rowsncolumns/spreadsheet": "^7.0.4",
+    "@stripe/react-stripe-js": "^1.1.2",
+    "@stripe/stripe-js": "^1.8.0",
+    "clsx": "^1.1.1",
+    "emotion-theming": "^10.0.27",
+    "hot-formula-parser": "^3.0.2",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "stripe": "^8.68.0",
+    "vercel": "^19.1.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

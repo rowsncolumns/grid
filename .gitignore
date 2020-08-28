@@ -1,0 +1,8 @@
+.DS_Store
+.cache
+dist
+node_modules
+*.log
+storybook-static
+.parcel-cache
+*.bk

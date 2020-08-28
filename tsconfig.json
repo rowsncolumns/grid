@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "module": "commonjs",
+    "target": "es2019",
+    "noImplicitAny": true,
+    "downlevelIteration": true,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "strictNullChecks": true,
+    "sourceMap": true
+  },
+  "exclude": ["node_modules", "examples", "packages/website", "packages/storybook"]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@rowsncolumns/storybook",
+  "private": true,
+  "version": "7.0.4",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "storybook": "start-storybook -p 9002 -s ./public",
+    "build-storybook": "build-storybook -c .storybook -o .out",
+    "deploy-storybook": "storybook-to-ghpages",
+    "postpublish": "yarn deploy-storybook"
+  },
+  "dependencies": {
+    "@rowsncolumns/export": "^7.0.4",
+    "@rowsncolumns/grid": "^6.2.2",
+    "@rowsncolumns/spreadsheet": "^7.0.4"
+  }
+}
