@@ -474,6 +474,7 @@ const useEditable = ({
 
       /* Call on before edit */
       if (canEdit(coords)) {
+        /* Let user modify coords before edit */
         onBeforeEdit?.(coords);
 
         /*  Focus */
@@ -501,7 +502,7 @@ const useEditable = ({
         showEditor();
       }
     },
-    [frozenRows, frozenColumns, onBeforeEdit]
+    [frozenRows, frozenColumns, onBeforeEdit, canEdit]
   );
 
   /**
