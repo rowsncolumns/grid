@@ -1,0 +1,21 @@
+{
+  "name": "example-zustand",
+  "version": "4.2.3",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "parcel index.html"
+  },
+  "dependencies": {
+    "@rowsncolumns/grid": "^6.2.3",
+    "namor": "^2.0.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "zustand": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.1",
+    "parcel-bundler": "^1.12.4"
+  }
+}
