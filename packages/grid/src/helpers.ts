@@ -701,11 +701,15 @@ export const prepareClipboardData = (
 ): [string, string] => {
   const html = ["<table>"];
   const csv: string[] = [];
+  const sanitizeCell = (value: any) => {
+    if (isNull(value)) return ''
+    return value
+  }
   rows.forEach((row) => {
     html.push("<tr>");
     const csvRow: string[] = [];
     row.forEach((cell) => {
-      html.push(`<td>${cell}</td>`);
+      html.push(`<td>${sanitizeCell(cell)}</td>`);
       csvRow.push(`${castToString(cell)?.replace(/"/g, '""')}`);
     });
     csv.push(csvRow.join(","));

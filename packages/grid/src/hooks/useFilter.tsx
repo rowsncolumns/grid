@@ -9,9 +9,11 @@ export interface FilterView {
 
 export type Filter = Record<string, FilterDefinition>;
 export type FilterDefinition = {
-  operator: ContainsTextOperators | DataValidationOperator;
-  values: any[];
+  operator?: ContainsTextOperators | DataValidationOperator;
+  values?: React.ReactText[];
+  sort?: SortDirection;
 };
+export type SortDirection = "asc" | "desc";
 export type DataValidationOperator =
   | "between"
   | "notBetween"
@@ -177,7 +179,7 @@ const useFilter = ({
     const { filterView } = currentFilter;
     const { columnIndex } = filterCell;
     const { bounds } = filterView;
-    var filterValues = new Set();
+    const filterValues = new Set();
     for (let i = bounds.top + 1; i <= bounds.bottom; i++) {
       const cell = { rowIndex: i, columnIndex };
       const text = getValue(cell);
@@ -194,6 +196,7 @@ const useFilter = ({
         width={width}
         values={values}
         index={currentFilter?.index}
+        filterView={currentFilter?.filterView}
         filter={currentFilter?.filter}
         columnIndex={filterCell?.columnIndex}
       />
