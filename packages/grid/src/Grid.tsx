@@ -255,6 +255,9 @@ export interface GridProps
    * Enable draging active cell and selections
    */
   enableSelectionDrag?: boolean;
+  /**
+   * Is user currently dragging a selection
+   */
   isDraggingSelection?: boolean;
 }
 
@@ -2629,7 +2632,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
       });
       const width =
         getColumnOffset({
-          index: Math.min(columnCount - 1, right + 1),
+          index: Math.min(columnCount, right + 1),
           rowHeight,
           columnWidth,
           instanceProps: instanceProps.current,
@@ -2637,7 +2640,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         }) - x;
       const height =
         getRowOffset({
-          index: Math.min(rowCount - 1, bottom + 1),
+          index: Math.min(rowCount, bottom + 1),
           rowHeight,
           columnWidth,
           instanceProps: instanceProps.current,
