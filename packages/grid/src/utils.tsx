@@ -255,7 +255,7 @@ export const createHTMLBox = ({
     />,
   ]
   return (
-    <React.Fragment>      
+    <React.Fragment key={key}>      
       {fill && (
         <div
           style={{
