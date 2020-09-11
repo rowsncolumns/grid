@@ -1,19 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { ShapeConfig } from "konva/types/Shape";
 import { Line, Rect } from "react-konva";
-
-interface BoxConfig extends ShapeConfig {
-  strokeLeftColor?: string;
-  strokeTopColor?: string;
-  strokeRightColor?: string;
-  strokeBottomColor?: string;
-  strokeWidth?: number;
-  strokeTopWidth?: number;
-  strokeRightWidth?: number;
-  strokeBottomWidth?: number;
-  strokeLeftWidth?: number;
-  fillOpacity?: number
-}
+import { SelectionProps } from "./Grid";
 
 /**
  * Create a box with custom top/right/bottom/left colors and widths
@@ -131,78 +119,140 @@ export const createHTMLBox = ({
   key,
   strokeStyle = "solid",
   fillOpacity = 1,
-}: BoxConfig) => {
-  const commonProps = {};
+  draggable,
+  isDragging,
+  borderCoverWidth = 5,
+  ...props
+}: SelectionProps) => {
+  const lineStyles: Partial<React.CSSProperties> = {
+    borderWidth: 0,
+    position: 'absolute',
+    pointerEvents: 'none'
+  };
+  /**
+   * Border cover is so that there is enough
+   * draggable handle area for the user.
+   * Default is 5px
+   */
+  const showBorderCover = draggable
+  const borderCoverStyle: React.CSSProperties = {
+    position: 'absolute',
+    pointerEvents: draggable
+      ? 'auto'
+      : 'none',
+    cursor: draggable
+      ? isDragging
+        ? 'grabbing'
+        : 'grab'
+      : 'initial'
+  }
   width = width - Math.floor(strokeWidth / 2);
   height = height - Math.floor(strokeWidth / 2);
   // y = y - Math.ceil(strokeWidth / 2);
   const lines = [
     <div
-      style={{
-        position: "absolute",
+      style={{     
+        ...lineStyles,   
         left: x,
         top: y,
         width: width,
         height: strokeTopWidth,
-        borderWidth: 0,
         borderColor: strokeTopColor,
         borderTopWidth: strokeTopWidth,
-        borderStyle: strokeStyle,
-        pointerEvents: 'none',
+        borderStyle: strokeStyle,        
       }}
       key="top"
-      {...commonProps}
+      {...props}
     />,
     <div
       style={{
-        position: "absolute",
+        ...lineStyles,
         left: x + width,
         top: y,
         width: strokeRightWidth,
         height: height,
-        borderWidth: 0,
         borderColor: strokeRightColor,
         borderRightWidth: strokeRightWidth,
         borderStyle: strokeStyle,
-        pointerEvents: 'none',
       }}
       key="right"
-      {...commonProps}
+      {...props}
     />,
-    ,
     <div
       style={{
-        position: "absolute",
+        ...lineStyles,
         left: x,
         top: y + height,
         width: width + strokeTopWidth,
         height: strokeBottomWidth,
-        borderWidth: 0,
         borderColor: strokeBottomColor,
         borderBottomWidth: strokeBottomWidth,
         borderStyle: strokeStyle,
-        pointerEvents: 'none',
       }}
       key="bottom"
-      {...commonProps}
+      {...props}
     />,
     <div
       style={{
-        position: "absolute",
+        ...lineStyles,
         left: x,
         top: y,
         width: strokeLeftWidth,
-        height: height,
-        borderWidth: 0,
+        height: height,        
         borderColor: strokeLeftColor,
         borderLeftWidth: strokeLeftWidth,
         borderStyle: strokeStyle,
-        pointerEvents: 'none',
       }}
       key="left"
-      {...commonProps}
+      {...props}
     />,
   ];
+  const borderCovers = [
+    <div
+      style={{     
+        ...borderCoverStyle,   
+        left: x,
+        top: y,
+        width: width,
+        height: 5,        
+      }}
+      key="top"
+      {...props}
+    />,
+    <div
+      style={{
+        ...borderCoverStyle,
+        left: x + width - borderCoverWidth + strokeRightWidth,
+        top: y,
+        width: borderCoverWidth,
+        height: height,
+      }}
+      key="right"
+      {...props}
+    />,
+    <div
+      style={{
+        ...borderCoverStyle,
+        left: x,
+        top: y + height - borderCoverWidth + strokeBottomWidth,
+        width: width + strokeTopWidth,
+        height: borderCoverWidth,
+      }}
+      key="bottom"
+      {...props}
+    />,
+    <div
+      style={{
+        ...borderCoverStyle,
+        left: x,
+        top: y,
+        width: borderCoverWidth,
+        height: height,
+      }}
+      key="left"
+      {...props}
+    />,
+  ]
   return (
     <React.Fragment key={key}>      
       {fill && (
@@ -218,10 +268,10 @@ export const createHTMLBox = ({
             userSelect: "none",
             pointerEvents: 'none',
           }}
-          {...commonProps}
         />
       )}
       {lines}
+      {showBorderCover && borderCovers}
     </React.Fragment>
   );
 };
