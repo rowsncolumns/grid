@@ -2602,13 +2602,14 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         }) -
         x +
         getColumnWidth(actualRight, instanceProps.current);
+
       fillSelections = selectionRenderer({
         type: "fill",
         x,
         y,
         width,
         height,
-        key: 0,
+        key: -1,
         stroke: "gray",
         strokeStyle: "dashed",
       });

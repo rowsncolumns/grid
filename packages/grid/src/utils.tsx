@@ -122,6 +122,7 @@ export const createHTMLBox = ({
   draggable,
   isDragging,
   borderCoverWidth = 5,
+  type,
   ...props
 }: SelectionProps) => {
   const lineStyles: Partial<React.CSSProperties> = {
@@ -254,7 +255,7 @@ export const createHTMLBox = ({
     />,
   ]
   return (
-    <React.Fragment key={key}>      
+    <React.Fragment>      
       {fill && (
         <div
           style={{
