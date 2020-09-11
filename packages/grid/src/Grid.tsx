@@ -276,7 +276,7 @@ export interface SelectionProps extends ShapeConfig, Omit<React.HTMLAttributes<H
   isDragging?: boolean;
   activeCell?: CellInterface;
   selection?: SelectionArea;
-  key?: number;
+  key: number;
   draggable?: boolean;
   borderCoverWidth?: number
 }
@@ -422,6 +422,7 @@ export type StylingProps = AreaStyle[];
 export interface AreaStyle {
   bounds: AreaProps;
   style?: Style;
+  strokeStyle: 'dashed' | 'solid' | 'dotted'
 }
 export interface Style {
   stroke?: string;
