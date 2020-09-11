@@ -422,7 +422,7 @@ export type StylingProps = AreaStyle[];
 export interface AreaStyle {
   bounds: AreaProps;
   style?: Style;
-  strokeStyle: 'dashed' | 'solid' | 'dotted'
+  strokeStyle?: 'dashed' | 'solid' | 'dotted'
 }
 export interface Style {
   stroke?: string;
@@ -2319,6 +2319,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         width: width,
         height: height,
         type: "activeCell",
+        key: 0,
         activeCell,
         isDragging: isDraggingSelection,
         /* Active cell is draggable only there are no other selections */
@@ -2602,6 +2603,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         y,
         width,
         height,
+        key: 0,
         stroke: "gray",
         strokeStyle: "dashed",
       });
