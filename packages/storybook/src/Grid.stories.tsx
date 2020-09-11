@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import Grid, {
   IChildrenProps,
   Cell as DefaultCell,
@@ -7,7 +7,9 @@ import Grid, {
   useEditable,
   useSizer as useAutoSizer,
   useTooltip,
-  Direction
+  Direction,
+  SelectionProps,
+  Selection
 } from "@rowsncolumns/grid";
 import { useMeasure } from "react-use";
 import { Rect, Text, Group, RegularPolygon } from "react-konva";
@@ -277,11 +279,26 @@ export const MergedCells: React.FC = () => {
     const gridRef = useRef();
     const rowCount = 200;
     const columnCount = 200;
-    const { selection, ...selectionProps } = useSelection({
+    const { selection, onSelectionMouseDown, isDragging, draggedSelection, ...selectionProps } = useSelection({
       gridRef,
       rowCount,
-      columnCount
+      columnCount,
+      mergedCells: mergedCells
     });
+    const borderStyles = useMemo(() => {
+      if (draggedSelection) {
+        return [{
+          ...draggedSelection,
+          style: {
+            strokeStyle: 'dashed',
+            strokeWidth: 2,
+            stroke: '#1a73e8'
+          }
+        }]
+      }
+      return []
+    }, [ draggedSelection ])
+
     return (
       <Grid
         width={width}
@@ -297,7 +314,30 @@ export const MergedCells: React.FC = () => {
         rowHeight={index => {
           return 20;
         }}
-        selection={selection}
+        isDraggingSelection={isDragging}
+        selectionRenderer={(props: SelectionProps) => {
+          return <Selection {...props} onMouseDown={(e) => {
+            onSelectionMouseDown?.(e, props.activeCell, props.selection, props.key)
+          }} />
+        }}
+        borderStyles={borderStyles}
+        // borderStyles={
+        //   [
+        //     {
+        //       bounds: {
+        //         top: 10,
+        //         left: 1,
+        //         right: 3,
+        //         bottom: 12
+        //       },
+        //       style: {
+        //         strokeStyle: 'dashed',
+        //         strokeWidth: 2,
+        //         stroke: 'blue'
+        //       }
+        //     }
+        //   ]
+        // }
         {...selectionProps}
       />
     );

@@ -4,6 +4,7 @@ import React, {
   useRef,
   useEffect,
   useMemo,
+  useReducer,
 } from "react";
 import { SelectionArea, CellInterface, GridRef, AreaProps } from "./../Grid";
 import {
@@ -16,6 +17,10 @@ import {
   clampIndex,
   HiddenType,
   findNextCellInDataRegion,
+  selectionFromActiveCell,
+  selectionSpansCells,
+  newSelectionFromDrag,
+  clampCellCoords,
 } from "./../helpers";
 import {
   KeyCodes,
@@ -120,6 +125,10 @@ export interface UseSelectionOptions {
    * New selection mode
    */
   newSelectionMode?: NewSelectionMode;
+  /**
+   * When selection is moved
+   */
+  onSelectionMove?: (from: SelectionArea, to: SelectionArea) => void;
 }
 
 export type NewSelectionMode = "clear" | "modify" | "append";
@@ -190,6 +199,23 @@ export interface SelectionResults {
    * Clear all current selections
    */
   clearSelections: () => void;
+  /**
+   * On Selection mousedown
+   */
+  onSelectionMouseDown?: (
+    e: React.MouseEvent<HTMLDivElement>,
+    cell: CellInterface | undefined,
+    selection: SelectionArea | undefined,
+    index: number | undefined
+  ) => void;
+  /**
+   * Boolean to indicate if a selection is being dragged
+   */
+  isDragging?: boolean;
+  /**
+   * Currently dragged selection
+   */
+  draggedSelection?: SelectionArea;
 }
 
 const EMPTY_SELECTION: SelectionArea[] = [];
@@ -221,6 +247,7 @@ const useSelection = ({
   mergedCells = [],
   canSelectionSpanMergedCells = defaultSelectionSpan,
   getValue,
+  onSelectionMove,
 }: UseSelectionOptions): SelectionResults => {
   const [activeCell, setActiveCell] = useState<CellInterface | null>(
     initialActiveCell
@@ -233,9 +260,17 @@ const useSelection = ({
   );
   const selectionStart = useRef<CellInterface | null>(null);
   const selectionEnd = useRef<CellInterface | null>(null);
-  const isSelecting = useRef<boolean>();
-  const isFilling = useRef<boolean>();
+  const isSelecting = useRef<boolean>(false);
+  const isFilling = useRef<boolean>(false);
   const firstActiveCell = useRef<CellInterface | null>(null);
+
+  /* Drag drop selection */
+  const [_, forceRender] = useReducer((s) => s + 1, 0);
+  const isDragging = useRef<boolean>(false);
+  const initialDraggedSelection = useRef<SelectionArea>();
+  const initialDraggedCell = useRef<CellInterface>();
+  const draggedSelection = useRef<SelectionArea>();
+  const draggedSelectionIndex = useRef<number>();
   /**
    * Need to store in ref because on mousemove and mouseup event that are
    * registered in document
@@ -574,7 +609,8 @@ const useSelection = ({
 
     const coords = gridRef.current.getCellCoordsFromOffset(
       e.clientX,
-      e.clientY
+      e.clientY,
+      false
     );
 
     if (!coords) return;
@@ -1104,7 +1140,8 @@ const useSelection = ({
 
     const coords = gridRef.current.getCellCoordsFromOffset(
       e.clientX,
-      e.clientY
+      e.clientY,
+      false
     );
     if (!coords) return;
     const selections = activeSelectionsRef.current;
@@ -1194,6 +1231,9 @@ const useSelection = ({
     const newBounds = (fillSelection as SelectionArea)?.bounds;
     if (!newBounds) return;
 
+    /* Focus on the grid */
+    gridRef.current?.focus();
+
     /* Callback */
     onFill && onFill(activeCell, fillSelection, selections);
 
@@ -1228,9 +1268,137 @@ const useSelection = ({
     };
   }, [handleFillHandleMouseDown]);
 
+  /**
+   * When user mouse downs on selection
+   */
+  const handleSelectionMouseDown = useCallback(
+    (
+      e: React.MouseEvent<HTMLDivElement>,
+      activeCell: CellInterface | undefined,
+      selection: SelectionArea | undefined,
+      index: number | undefined
+    ) => {
+      if (!gridRef.current) {
+        return;
+      }
+      let coords = gridRef.current.getCellCoordsFromOffset(
+        e.nativeEvent.clientX,
+        e.nativeEvent.clientY
+      );
+      if (!coords) {
+        return;
+      }
+      /* Make sure the coords do not extend selection bounds */
+      coords = clampCellCoords(coords, activeCell, selection);
+
+      /* Initial cell that is selected by user */
+      initialDraggedCell.current = coords;
+      /* Set selection */
+      if (activeCell) {
+        initialDraggedSelection.current = draggedSelection.current = {
+          bounds: gridRef.current.getCellBounds(activeCell),
+        };
+      }
+      if (selection) {
+        initialDraggedSelection.current = draggedSelection.current = selection;
+        draggedSelectionIndex.current = index;
+      }
+
+      /* Set dragging flag */
+      isDragging.current = true;
+
+      /* Listen to mousemove and mousedown events */
+      document.addEventListener("mouseup", handleSelectionMouseUp);
+      document.addEventListener("mousemove", handleSelectionMouseMove);
+
+      /* Force a re-render */
+      forceRender();
+    },
+    [selectionTopBound, selectionLeftBound, rowCount, columnCount]
+  );
+
+  /**
+   * Ond drag move
+   */
+  const handleSelectionMouseMove = useCallback((e: globalThis.MouseEvent) => {
+    if (!gridRef?.current) return;
+    const coords = gridRef.current.getCellCoordsFromOffset(
+      e.clientX,
+      e.clientY,
+      false
+    );
+    if (!coords) {
+      return;
+    }
+    if (!initialDraggedSelection.current || !initialDraggedCell.current) {
+      return;
+    }
+    let sel = newSelectionFromDrag(
+      initialDraggedSelection.current,
+      initialDraggedCell.current,
+      coords,
+      selectionTopBound,
+      selectionLeftBound,
+      rowCount,
+      columnCount
+    );
+    // Not required
+    // sel = { bounds : extendAreaToMergedCells(sel.bounds, mergedCellsRef.current) }
+    draggedSelection.current = sel;
+
+    /* Scroll to the cell */
+    gridRef.current?.scrollToItem(coords);
+
+    /* Re-render */
+    forceRender();
+  }, []);
+
+  /**
+   * When drag/drop is complete
+   */
+  const handleSelectionMouseUp = useCallback(() => {
+    const sel = draggedSelection.current;
+    if (sel) {
+      /* Select the first cell in the selection area */
+      setActiveCell({ rowIndex: sel.bounds.top, columnIndex: sel.bounds.left });
+      if (selectionSpansCells(sel?.bounds)) {
+        setSelections((prev) => {
+          return prev.map((cur, index) => {
+            if (index === draggedSelectionIndex.current) {
+              return sel;
+            }
+            return cur;
+          });
+        });
+      }
+    }
+
+    if (initialDraggedSelection.current && sel) {
+      onSelectionMove?.(initialDraggedSelection.current, sel);
+    }
+
+    /* Focus on the grid */
+    gridRef.current?.focus();
+
+    /* Reset all references */
+    isDragging.current = false;
+    draggedSelection.current = void 0;
+    draggedSelectionIndex.current = void 0;
+
+    /* Remove event handlers */
+    document.removeEventListener("mouseup", handleSelectionMouseUp);
+    document.removeEventListener("mousemove", handleSelectionMouseMove);
+
+    /* Force render */
+    forceRender();
+  }, []);
+
   return {
     activeCell,
     selections,
+    isDragging: isDragging.current,
+    draggedSelection: draggedSelection.current,
+    onSelectionMouseDown: handleSelectionMouseDown,
     onMouseDown: handleMouseDown,
     onKeyDown: handleKeyDown,
     newSelection,

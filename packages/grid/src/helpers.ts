@@ -682,6 +682,53 @@ export const selectionFromActiveCell = (
 };
 
 /**
+ * Check if a selection are spans multiple cells
+ * @param sel 
+ */
+export const selectionSpansCells = (sel: AreaProps | undefined) => {
+  if (!sel) return false
+  return sel.bottom !== sel.top || sel.left !== sel.right
+}
+
+/**
+ * When user tries to drag a selection
+ * @param initialSelection 
+ * @param from 
+ * @param to 
+ */
+export const newSelectionFromDrag = (initialSelection: SelectionArea, from: CellInterface, to: CellInterface, topBound: number = 0, leftBound: number = 0, rowCount: number, columnCount: number) => {
+  const currentBounds = initialSelection.bounds
+  const top = Math.max(topBound, Math.min(rowCount, to.rowIndex + currentBounds.top - from.rowIndex))
+  const left = Math.max(leftBound, Math.min(columnCount, to.columnIndex + currentBounds.left - from.columnIndex))
+  return {
+    bounds: {
+      top,
+      left,
+      bottom: top + (currentBounds.bottom - currentBounds.top),
+      right: left + (currentBounds.right - currentBounds.left)
+    }
+  }
+}
+
+/**
+ * Clamp cell coordinates to be inside activeCell and selection
+ * @param coords 
+ * @param activeCell 
+ * @param selection 
+ */
+export const clampCellCoords = (coords: CellInterface, activeCell: CellInterface | undefined, selection: SelectionArea | undefined) => {
+  if (activeCell) {
+    coords.rowIndex = Math.max(activeCell.rowIndex, coords.rowIndex)
+    coords.columnIndex = Math.min(activeCell.columnIndex, coords.columnIndex)
+  }
+  if (selection) {
+    coords.rowIndex = Math.min(selection.bounds.bottom, Math.max(selection.bounds.top, coords.rowIndex))
+    coords.columnIndex = Math.min(selection.bounds.right, Math.max(selection.bounds.left, coords.columnIndex))
+  }
+  return coords
+}
+
+/**
  * Converts a number to alphabet
  * @param i
  */
@@ -802,6 +849,15 @@ export const areaIntersects = (area1: AreaProps, area2: AreaProps): boolean => {
   }
   return true;
 };
+
+/**
+ * Check if area is inside another area
+ * @param needle 
+ * @param haystack 
+ */
+export const areaInsideArea = (needle: AreaProps, haystack: AreaProps) => {
+  return needle.top >= haystack.top && needle.bottom <= haystack.bottom && needle.left >= haystack.left && needle.right <= haystack.right
+}
 
 /**
  * Get maximum bound of an area, caters to merged cells
