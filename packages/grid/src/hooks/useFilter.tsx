@@ -1,11 +1,17 @@
 import React, { useMemo, useState, useCallback } from "react";
-import { CellInterface, GridRef, CellPosition, AreaProps, AreaStyle } from "./../Grid";
+import {
+  CellInterface,
+  GridRef,
+  CellPosition,
+  AreaProps,
+  AreaStyle,
+} from "./../Grid";
 import { isNull } from "../helpers";
 
 export interface FilterView {
   bounds: AreaProps;
   filters?: Filter;
-  style?: AreaStyle
+  style?: AreaStyle;
 }
 
 export type Filter = Record<string, FilterDefinition>;

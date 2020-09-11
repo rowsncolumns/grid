@@ -274,11 +274,12 @@ export interface SelectionProps extends ShapeConfig, Omit<React.HTMLAttributes<H
   fillHandleProps?: Record<string, (e: any) => void>;
   type: "fill" | "activeCell" | "selection" | 'border';
   isDragging?: boolean;
+  inProgress?: boolean;
   activeCell?: CellInterface;
   selection?: SelectionArea;
   key: number;
   draggable?: boolean;
-  borderCoverWidth?: number
+  borderCoverWidth?: number;
 }
 
 export type ScrollCoords = {
@@ -2430,7 +2431,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         selectionAreasFrozenColumns.push(
           selectionRenderer({
             ...styles,
-            type: "selection",
+            type: "selection",            
             key: i,
             x: selectionBounds.x,
             y: selectionBounds.y,
@@ -2441,6 +2442,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
                 ? selectionStrokeWidth
                 : 0,
             selection,
+            inProgress,
           })
         );
       }
@@ -2475,6 +2477,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
                 ? selectionStrokeWidth
                 : 0,
             selection,
+            inProgress,
           })
         );
       }
@@ -2530,6 +2533,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
                 ? selectionStrokeWidth
                 : 0,
             selection,
+            inProgress,
           })
         );
       }
@@ -2543,6 +2547,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
           width: selectionBounds.width,
           height: selectionBounds.height,          
           selection,
+          inProgress,
         })
       );
 
