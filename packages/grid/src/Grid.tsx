@@ -2371,7 +2371,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         fill: selectionBackgroundColor,
         strokeWidth: isDraggingSelection ? 0 : 1,
         isDragging: isDraggingSelection,
-        draggable: enableSelectionDrag,
+        draggable: inProgress ? false : enableSelectionDrag,
         ...style,
       };
       if (inProgress) isSelectionInProgress = true;
