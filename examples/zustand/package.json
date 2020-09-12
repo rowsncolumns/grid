@@ -1,6 +1,6 @@
 {
   "name": "example-zustand",
-  "version": "4.2.12",
+  "version": "4.2.13",
   "main": "index.js",
   "license": "MIT",
   "private": true,
@@ -8,7 +8,7 @@
     "start": "parcel index.html"
   },
   "dependencies": {
-    "@rowsncolumns/grid": "^6.2.12",
+    "@rowsncolumns/grid": "^6.2.13",
     "namor": "^2.0.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
