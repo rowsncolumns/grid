@@ -860,6 +860,20 @@ export const areaInsideArea = (needle: AreaProps, haystack: AreaProps) => {
 }
 
 /**
+ * Check if two areas are equal
+ * @param area1 
+ * @param area2 
+ */
+export const isAreasEqual = (area1: AreaProps, area2: AreaProps) => {
+  return (
+    area1.bottom === area2.bottom &&
+    area1.top === area2.top &&
+    area1.left === area2.left &&
+    area1.right === area2.right
+  )
+}
+
+/**
  * Get maximum bound of an area, caters to merged cells
  * @param area
  * @param boundGetter
