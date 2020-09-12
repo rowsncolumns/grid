@@ -1,7 +1,7 @@
 {
   "name": "@rowsncolumns/storybook",
   "private": true,
-  "version": "7.0.16",
+  "version": "7.0.17",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@rowsncolumns/export": "^7.0.4",
-    "@rowsncolumns/grid": "^6.2.14",
+    "@rowsncolumns/grid": "^6.2.15",
     "@rowsncolumns/spreadsheet": "^7.0.4"
   }
 }
