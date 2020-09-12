@@ -1362,7 +1362,7 @@ const useSelection = ({
       /* Select the first cell in the selection area */
       const coords = { rowIndex: sel.bounds.top, columnIndex: sel.bounds.left };
       setActiveCell(coords);
-      /* Set internal property */
+      /* Update selection start */
       selectionStart.current = coords;
 
       if (selectionSpansCells(sel?.bounds)) {
@@ -1375,13 +1375,11 @@ const useSelection = ({
           });
         });
 
-        /* Set internal property */
-        if (draggedSelectionIndex.current === selections.length - 1) {
-          selectionEnd.current = {
-            rowIndex: sel.bounds.bottom,
-            columnIndex: sel.bounds.right,
-          };
-        }
+        /* Update selection end */
+        selectionEnd.current = {
+          rowIndex: sel.bounds.bottom,
+          columnIndex: sel.bounds.right,
+        };
       }
     }
 
