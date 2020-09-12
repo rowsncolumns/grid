@@ -1314,7 +1314,7 @@ const useSelection = ({
       /* Force a re-render */
       forceRender();
     },
-    [selectionTopBound, selectionLeftBound, rowCount, columnCount]
+    [selectionTopBound, selectionLeftBound, rowCount, columnCount, selections]
   );
 
   /**
@@ -1360,7 +1360,7 @@ const useSelection = ({
     const sel = draggedSelection.current;
     if (sel) {
       /* Select the first cell in the selection area */
-      const coords = { rowIndex: sel.bounds.top, columnIndex: sel.bounds.left }
+      const coords = { rowIndex: sel.bounds.top, columnIndex: sel.bounds.left };
       setActiveCell(coords);
       /* Set internal property */
       selectionStart.current = coords;
@@ -1374,7 +1374,15 @@ const useSelection = ({
             return cur;
           });
         });
-      }      
+
+        /* Set internal property */
+        if (draggedSelectionIndex.current === selections.length - 1) {
+          selectionEnd.current = {
+            rowIndex: sel.bounds.bottom,
+            columnIndex: sel.bounds.right,
+          };
+        }
+      }
     }
 
     if (initialDraggedSelection.current && sel) {
