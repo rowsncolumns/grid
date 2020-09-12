@@ -1360,7 +1360,11 @@ const useSelection = ({
     const sel = draggedSelection.current;
     if (sel) {
       /* Select the first cell in the selection area */
-      setActiveCell({ rowIndex: sel.bounds.top, columnIndex: sel.bounds.left });
+      const coords = { rowIndex: sel.bounds.top, columnIndex: sel.bounds.left }
+      setActiveCell(coords);
+      /* Set internal property */
+      selectionStart.current = coords;
+
       if (selectionSpansCells(sel?.bounds)) {
         setSelections((prev) => {
           return prev.map((cur, index) => {
@@ -1370,7 +1374,7 @@ const useSelection = ({
             return cur;
           });
         });
-      }
+      }      
     }
 
     if (initialDraggedSelection.current && sel) {
