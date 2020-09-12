@@ -1,6 +1,6 @@
 {
   "name": "example-react-table",
-  "version": "4.2.16",
+  "version": "4.2.17",
   "main": "index.js",
   "license": "MIT",
   "private": true,
@@ -8,7 +8,7 @@
     "start": "parcel index.html"
   },
   "dependencies": {
-    "@rowsncolumns/grid": "^6.2.16",
+    "@rowsncolumns/grid": "^6.2.17",
     "namor": "^2.0.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
