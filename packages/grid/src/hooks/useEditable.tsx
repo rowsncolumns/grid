@@ -433,6 +433,7 @@ const useEditable = ({
   const [autoFocus, setAutoFocus] = useState<boolean>(true);
   const isDirtyRef = useRef<boolean>(false);
   const currentValueRef = useRef(value);
+  const initialValueRef = useRef<string>();
   /* To prevent stale closures data */
   const getValueRef = useRef(getValue);
   const showEditor = useCallback(() => setShowEditor(true), []);
@@ -493,6 +494,7 @@ const useEditable = ({
          * So that during mousedown, onSubmit gets called
          */
         isDirtyRef.current = !!initialValue;
+        initialValueRef.current = initialValue;
 
         /* Trigger onChange handlers */
         setValue(value);
@@ -752,6 +754,18 @@ const useEditable = ({
 
   const handleChange = useCallback(
     (newValue: string, activeCell) => {
+      /**
+       * Make sure we dont call onChange if initialValue is set
+       * This is to accomodate for editor that fire onChange during initialvalue
+       * Eg: Slate  <Editor value='' onChange />
+       */
+      if (
+        initialValueRef.current !== void 0 &&
+        initialValueRef.current === newValue
+      ) {
+        initialValueRef.current = void 0;
+        return;
+      }
       if (!currentActiveCellRef.current) return;
       /* Check if the value has changed. Used to conditionally submit if editor is not in focus */
       isDirtyRef.current = newValue !== value;
