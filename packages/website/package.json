@@ -1,6 +1,6 @@
 {
   "name": "website",
-  "version": "6.0.5",
+  "version": "7.0.0",
   "private": true,
   "scripts": {
     "docs:start": "docusaurus start",
