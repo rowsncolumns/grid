@@ -2,12 +2,7 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/*",
-      "examples/*",
-      "hooks/*"
-    ],
-    "nohoist": [
-      "packages/storybook"
+      "packages/*"
     ]
   },
   "scripts": {
