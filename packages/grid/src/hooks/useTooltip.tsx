@@ -27,11 +27,11 @@ export interface TooltipResults {
   /**
    * Mousemove listener to align tooltip
    */
-  onMouseMove: ((e: React.MouseEvent<HTMLInputElement>) => void) | undefined;
+  onMouseMove: ((e: React.MouseEvent<HTMLElement>) => void) | undefined;
   /**
    * Mouse leave listener to hide tooltip
    */
-  onMouseLeave: ((e: React.MouseEvent<HTMLInputElement>) => void) | undefined;
+  onMouseLeave: ((e: React.MouseEvent<HTMLElement>) => void) | undefined;
 }
 
 export interface DefaultTooltipProps {

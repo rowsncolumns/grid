@@ -33,6 +33,7 @@ import {
   TimeoutID,
   Align,
   clampIndex,
+  canUseDOM,
 } from "./helpers";
 import { ShapeConfig } from "konva/types/Shape";
 import { CellRenderer as defaultItemRenderer } from "./Cell";
@@ -270,9 +271,11 @@ export type RefAttribute = {
 };
 
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
-export interface SelectionProps extends ShapeConfig, Omit<React.HTMLAttributes<HTMLDivElement>, 'draggable'> {
+export interface SelectionProps
+  extends ShapeConfig,
+    Omit<React.HTMLAttributes<HTMLDivElement>, "draggable"> {
   fillHandleProps?: Record<string, (e: any) => void>;
-  type: "fill" | "activeCell" | "selection" | 'border';
+  type: "fill" | "activeCell" | "selection" | "border";
   isDragging?: boolean;
   inProgress?: boolean;
   activeCell?: CellInterface;
@@ -409,6 +412,7 @@ export type GridRef = {
   getViewPort: () => ViewPortProps;
   getRelativePositionFromOffset: (x: number, y: number) => PosXYRequired | null;
   scrollToTop: () => void;
+  scrollToBottom: () => void;
   getDimensions: () => {
     containerWidth: number;
     containerHeight: number;
@@ -420,11 +424,17 @@ export type GridRef = {
 export type MergedCellMap = Map<string, AreaProps>;
 
 export type StylingProps = AreaStyle[];
-export interface AreaStyle {
+
+export interface AreaStyle extends AreaMeta {
   bounds: AreaProps;
   style?: Style;
-  strokeStyle?: 'dashed' | 'solid' | 'dotted'
+  strokeStyle?: "dashed" | "solid" | "dotted";
 }
+export interface AreaMeta {
+  title?: string;
+  [key: string]: any;
+}
+
 export interface Style {
   stroke?: string;
   strokeLeftColor?: string;
@@ -555,6 +565,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         getViewPort,
         getRelativePositionFromOffset,
         scrollToTop,
+        scrollToBottom,
         getDimensions,
       };
     });
@@ -594,7 +605,9 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
 
     /* Focus container */
     const focusContainer = useCallback(() => {
-      return containerRef.current?.focus();
+      if (canUseDOM && document.activeElement !== containerRef.current) {
+        return containerRef.current?.focus();
+      }
     }, []);
 
     /**
@@ -1279,6 +1292,11 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
       scrollTo({ scrollTop: 0, scrollLeft: 0 });
     }, []);
 
+    /* Scroll grid to bottom */
+    const scrollToBottom = useCallback(() => {
+      scrollTo({ scrollTop: estimatedTotalHeight - containerHeight });
+    }, [estimatedTotalHeight, containerHeight]);
+
     /**
      * Scrollby utility
      */
@@ -1361,6 +1379,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
                 frozenOffset: frozenColumnOffset,
                 align: columnAlign,
                 scale,
+                estimatedTotalWidth,
+                estimatedTotalHeight,
               })
             : void 0;
 
@@ -1387,6 +1407,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
                 frozenOffset: frozenRowOffset,
                 align: rowAlign,
                 scale,
+                estimatedTotalWidth,
+                estimatedTotalHeight,
               })
             : void 0;
 
@@ -1411,6 +1433,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
       [
         containerHeight,
         containerWidth,
+        estimatedTotalWidth,
+        estimatedTotalHeight,
         rowCount,
         columnCount,
         scrollbarSize,
@@ -2356,7 +2380,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
     const selectionAreasFrozenRows = [];
     const selectionAreasIntersection = [];
     for (let i = 0; i < selections.length; i++) {
-      const selection = selections[i]
+      const selection = selections[i];
       const { bounds, inProgress, style } = selection;
       const { top, left, right, bottom } = bounds;
       const selectionBounds = { x: 0, y: 0, width: 0, height: 0 };
@@ -2431,14 +2455,15 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         selectionAreasFrozenColumns.push(
           selectionRenderer({
             ...styles,
-            type: "selection",            
+            type: "selection",
             key: i,
             x: selectionBounds.x,
             y: selectionBounds.y,
             width: frozenColumnSelectionWidth,
-            height: selectionBounds.height,            
+            height: selectionBounds.height,
             strokeRightWidth:
-              frozenColumnSelectionWidth === selectionBounds.width && !isDraggingSelection
+              frozenColumnSelectionWidth === selectionBounds.width &&
+              !isDraggingSelection
                 ? selectionStrokeWidth
                 : 0,
             selection,
@@ -2473,7 +2498,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
             width: selectionBounds.width,
             height: frozenRowSelectionHeight,
             strokeBottomWidth:
-              frozenRowSelectionHeight === selectionBounds.height && !isDraggingSelection
+              frozenRowSelectionHeight === selectionBounds.height &&
+              !isDraggingSelection
                 ? selectionStrokeWidth
                 : 0,
             selection,
@@ -2525,11 +2551,13 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
             width: frozenIntersectionSelectionWidth,
             height: frozenIntersectionSelectionHeight,
             strokeBottomWidth:
-              frozenIntersectionSelectionHeight === selectionBounds.height && !isDraggingSelection
+              frozenIntersectionSelectionHeight === selectionBounds.height &&
+              !isDraggingSelection
                 ? selectionStrokeWidth
                 : 0,
             strokeRightWidth:
-              frozenIntersectionSelectionWidth === selectionBounds.width && !isDraggingSelection
+              frozenIntersectionSelectionWidth === selectionBounds.width &&
+              !isDraggingSelection
                 ? selectionStrokeWidth
                 : 0,
             selection,
@@ -2545,7 +2573,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
           x: selectionBounds.x,
           y: selectionBounds.y,
           width: selectionBounds.width,
-          height: selectionBounds.height,          
+          height: selectionBounds.height,
           selection,
           inProgress,
         })
@@ -2663,7 +2691,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
           key: i,
           width,
           height,
-          type: 'border',
+          type: "border",
           ...style,
         })
       );
@@ -2687,7 +2715,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         borderStyleCellsFrozenColumns.push(
           createHTMLBox({
             ...style,
-            type: 'border',
+            type: "border",
             x,
             y,
             key: i,
@@ -2721,7 +2749,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         borderStyleCellsFrozenRows.push(
           createHTMLBox({
             ...style,
-            type: 'border',
+            type: "border",
             x,
             y,
             key: i,
@@ -2771,7 +2799,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         borderStyleCellsIntersection.push(
           createHTMLBox({
             ...style,
-            type: 'border',
+            type: "border",
             x,
             y,
             key: i,

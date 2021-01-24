@@ -531,6 +531,8 @@ export interface AlignmentProps extends Omit<IItemMetaData, "offset"> {
   scrollOffset: number;
   scrollbarSize: number;
   frozenOffset: number;
+  estimatedTotalHeight: number;
+  estimatedTotalWidth: number;
 }
 
 export const getOffsetForIndexAndAlignment = ({
@@ -548,6 +550,8 @@ export const getOffsetForIndexAndAlignment = ({
   scrollbarSize,
   frozenOffset = 0,
   scale,
+  estimatedTotalHeight,
+  estimatedTotalWidth,
 }: AlignmentProps): number => {
   const size = itemType === "column" ? containerWidth : containerHeight;
   const itemMetadata = getItemMetadata({
@@ -562,9 +566,7 @@ export const getOffsetForIndexAndAlignment = ({
   // Get estimated total size after ItemMetadata is computed,
   // To ensure it reflects actual measurements instead of just estimates.
   const estimatedTotalSize =
-    itemType === "column"
-      ? getEstimatedTotalWidth(columnCount, instanceProps)
-      : getEstimatedTotalHeight(rowCount, instanceProps);
+    itemType === "column" ? estimatedTotalWidth : estimatedTotalHeight;
 
   const maxOffset = Math.max(
     0,
@@ -683,50 +685,77 @@ export const selectionFromActiveCell = (
 
 /**
  * Check if a selection are spans multiple cells
- * @param sel 
+ * @param sel
  */
 export const selectionSpansCells = (sel: AreaProps | undefined) => {
-  if (!sel) return false
-  return sel.bottom !== sel.top || sel.left !== sel.right
-}
+  if (!sel) return false;
+  return sel.bottom !== sel.top || sel.left !== sel.right;
+};
 
 /**
  * When user tries to drag a selection
- * @param initialSelection 
- * @param from 
- * @param to 
+ * @param initialSelection
+ * @param from
+ * @param to
  */
-export const newSelectionFromDrag = (initialSelection: SelectionArea, from: CellInterface, to: CellInterface, topBound: number = 0, leftBound: number = 0, rowCount: number, columnCount: number) => {
-  const currentBounds = initialSelection.bounds
-  const top = Math.max(topBound, Math.min(rowCount, to.rowIndex + currentBounds.top - from.rowIndex))
-  const left = Math.max(leftBound, Math.min(columnCount, to.columnIndex + currentBounds.left - from.columnIndex))
+export const newSelectionFromDrag = (
+  initialSelection: SelectionArea,
+  from: CellInterface,
+  to: CellInterface,
+  topBound: number = 0,
+  leftBound: number = 0,
+  rowCount: number,
+  columnCount: number
+) => {
+  const currentBounds = initialSelection.bounds;
+  const top = Math.max(
+    topBound,
+    Math.min(rowCount, to.rowIndex + currentBounds.top - from.rowIndex)
+  );
+  const left = Math.max(
+    leftBound,
+    Math.min(
+      columnCount,
+      to.columnIndex + currentBounds.left - from.columnIndex
+    )
+  );
   return {
     bounds: {
       top,
       left,
       bottom: top + (currentBounds.bottom - currentBounds.top),
-      right: left + (currentBounds.right - currentBounds.left)
-    }
-  }
-}
+      right: left + (currentBounds.right - currentBounds.left),
+    },
+  };
+};
 
 /**
  * Clamp cell coordinates to be inside activeCell and selection
- * @param coords 
- * @param activeCell 
- * @param selection 
+ * @param coords
+ * @param activeCell
+ * @param selection
  */
-export const clampCellCoords = (coords: CellInterface, activeCell: CellInterface | undefined, selection: SelectionArea | undefined) => {
+export const clampCellCoords = (
+  coords: CellInterface,
+  activeCell: CellInterface | undefined,
+  selection: SelectionArea | undefined
+) => {
   if (activeCell) {
-    coords.rowIndex = Math.max(activeCell.rowIndex, coords.rowIndex)
-    coords.columnIndex = Math.min(activeCell.columnIndex, coords.columnIndex)
+    coords.rowIndex = Math.max(activeCell.rowIndex, coords.rowIndex);
+    coords.columnIndex = Math.min(activeCell.columnIndex, coords.columnIndex);
   }
   if (selection) {
-    coords.rowIndex = Math.min(selection.bounds.bottom, Math.max(selection.bounds.top, coords.rowIndex))
-    coords.columnIndex = Math.min(selection.bounds.right, Math.max(selection.bounds.left, coords.columnIndex))
+    coords.rowIndex = Math.min(
+      selection.bounds.bottom,
+      Math.max(selection.bounds.top, coords.rowIndex)
+    );
+    coords.columnIndex = Math.min(
+      selection.bounds.right,
+      Math.max(selection.bounds.left, coords.columnIndex)
+    );
   }
-  return coords
-}
+  return coords;
+};
 
 /**
  * Converts a number to alphabet
@@ -749,9 +778,9 @@ export const prepareClipboardData = (
   const html = ["<table>"];
   const csv: string[] = [];
   const sanitizeCell = (value: any) => {
-    if (isNull(value)) return ''
-    return value
-  }
+    if (isNull(value)) return "";
+    return value;
+  };
   rows.forEach((row) => {
     html.push("<tr>");
     const csvRow: string[] = [];
@@ -852,26 +881,37 @@ export const areaIntersects = (area1: AreaProps, area2: AreaProps): boolean => {
 
 /**
  * Check if area is inside another area
- * @param needle 
- * @param haystack 
+ * @param needle
+ * @param haystack
  */
 export const areaInsideArea = (needle: AreaProps, haystack: AreaProps) => {
-  return needle.top >= haystack.top && needle.bottom <= haystack.bottom && needle.left >= haystack.left && needle.right <= haystack.right
-}
+  return (
+    needle.top >= haystack.top &&
+    needle.bottom <= haystack.bottom &&
+    needle.left >= haystack.left &&
+    needle.right <= haystack.right
+  );
+};
 
 /**
  * Check if two areas are equal
- * @param area1 
- * @param area2 
+ * @param area1
+ * @param area2
  */
-export const isAreasEqual = (area1: AreaProps, area2: AreaProps) => {
+export const isAreasEqual = (
+  area1: AreaProps | undefined,
+  area2: AreaProps | undefined
+) => {
+  if (area1 === void 0 || area2 === void 0) {
+    return false;
+  }
   return (
     area1.bottom === area2.bottom &&
     area1.top === area2.top &&
     area1.left === area2.left &&
     area1.right === area2.right
-  )
-}
+  );
+};
 
 /**
  * Get maximum bound of an area, caters to merged cells
@@ -994,6 +1034,21 @@ export const isEqualCells = (
 ) => {
   if (isNull(a) || isNull(b) || a === null || b === null) return false;
   return a.rowIndex === b.rowIndex && a.columnIndex === b.columnIndex;
+};
+
+/**
+ * Simple utility function to check if cell is within bounds
+ * @param cell
+ * @param bounds
+ */
+export const isCellWithinBounds = (cell: CellInterface, bounds: AreaProps) => {
+  if (cell.rowIndex < bounds.top || cell.rowIndex > bounds.bottom) {
+    return false;
+  }
+  if (cell.columnIndex < bounds.left || cell.columnIndex > bounds.right) {
+    return false;
+  }
+  return true;
 };
 
 /**
