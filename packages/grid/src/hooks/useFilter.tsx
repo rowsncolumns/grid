@@ -12,16 +12,24 @@ export interface FilterView {
   bounds: AreaProps;
   filters?: Filter;
   style?: AreaStyle;
+  title?: string;
 }
 
 export type Filter = Record<string, FilterDefinition>;
-export type FilterDefinition = {
-  operator?: ContainsTextOperators | DataValidationOperator;
-  values?: React.ReactText[];
+export type FilterDefinition<T = React.ReactText> = {
+  condition?: FilterConditionDefinition<T>;
+  equals?: T[];
   sort?: SortDirection;
+};
+export type FilterOperators = ContainsTextOperators | DataValidationOperator;
+export type FilterConditionDefinition<T = React.ReactText> = {
+  operator?: FilterOperators;
+  values?: T[];
 };
 export type SortDirection = "asc" | "desc";
 export type DataValidationOperator =
+  | "isEmpty"
+  | "notIsEmpty"
   | "between"
   | "notBetween"
   | "equal"
@@ -37,7 +45,10 @@ export type ContainsTextOperators =
   | "containsBlanks"
   | "notContainsBlanks"
   | "containsErrors"
-  | "notContainsErrors";
+  | "notContainsErrors"
+  | "startsWithText"
+  | "endsWithText"
+  | "equalText";
 
 export interface FilterProps {
   /**
@@ -206,6 +217,9 @@ const useFilter = ({
         filterView={currentFilter?.filterView}
         filter={currentFilter?.filter}
         columnIndex={filterCell?.columnIndex}
+        rowIndex={filterCell?.rowIndex}
+        onRequestClose={hideFilter}
+        onRequestShow={handleShowFilter}
       />
     ) : null;
 

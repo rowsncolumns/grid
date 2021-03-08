@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@types/scroller": "^0.1.1",
-    "konva": "^7.2.2",
+    "konva": "^7.2.5",
     "react-konva": "^17.0.1-3",
     "scroller": "^0.0.3",
     "tiny-invariant": "^1.1.0"

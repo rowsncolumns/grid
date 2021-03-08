@@ -272,7 +272,8 @@ export type RefAttribute = {
 
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 export interface SelectionProps
-  extends ShapeConfig,
+  extends AreaMeta,
+    ShapeConfig,
     Omit<React.HTMLAttributes<HTMLDivElement>, "draggable"> {
   fillHandleProps?: Record<string, (e: any) => void>;
   type: "fill" | "activeCell" | "selection" | "border";
@@ -282,6 +283,7 @@ export interface SelectionProps
   selection?: SelectionArea;
   key: number;
   draggable?: boolean;
+  bounds?: AreaProps;
   borderCoverWidth?: number;
 }
 
@@ -2398,7 +2400,13 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         draggable: inProgress ? false : enableSelectionDrag,
         ...style,
       };
-      if (inProgress) isSelectionInProgress = true;
+      /**
+       * If selection is in progress,
+       * use this variable to hide fill handle
+       */
+      if (inProgress) {
+        isSelectionInProgress = true;
+      }
       selectionBounds.y = getRowOffset({
         index: top,
         rowHeight,
@@ -2648,7 +2656,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
     const borderStyleCellsFrozenRows = [];
     const borderStyleCellsIntersection = [];
     for (let i = 0; i < borderStyles.length; i++) {
-      const { bounds, style } = borderStyles[i];
+      const { bounds, style, title, ...rest } = borderStyles[i];
       const { top, right, bottom, left } = bounds;
       const isLeftBoundFrozen = left < frozenColumns;
       const isTopBoundFrozen = top < frozenRows;
@@ -2686,13 +2694,14 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
 
       borderStyleCells.push(
         createHTMLBox({
+          ...rest,
+          ...style,
           x,
           y,
           key: i,
           width,
           height,
           type: "border",
-          ...style,
         })
       );
 
@@ -2714,6 +2723,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
           });
         borderStyleCellsFrozenColumns.push(
           createHTMLBox({
+            ...rest,
             ...style,
             type: "border",
             x,
@@ -2748,6 +2758,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
 
         borderStyleCellsFrozenRows.push(
           createHTMLBox({
+            ...rest,
             ...style,
             type: "border",
             x,
@@ -2798,6 +2809,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
 
         borderStyleCellsIntersection.push(
           createHTMLBox({
+            ...rest,
             ...style,
             type: "border",
             x,

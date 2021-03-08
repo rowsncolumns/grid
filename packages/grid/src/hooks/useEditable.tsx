@@ -259,6 +259,10 @@ export interface EditorProps {
       HTMLInputElement | HTMLTextAreaElement | HTMLDivElement
     >
   ) => void;
+  /**
+   * Max editor width
+   */
+  maxWidth?: string | number;
 }
 
 /**
@@ -434,6 +438,7 @@ const useEditable = ({
   const isDirtyRef = useRef<boolean>(false);
   const currentValueRef = useRef(value);
   const initialValueRef = useRef<string>();
+  const maxEditorDimensionsRef = useRef<{ height: number; width: number }>();
   /* To prevent stale closures data */
   const getValueRef = useRef(getValue);
   const showEditor = useCallback(() => setShowEditor(true), []);
@@ -488,6 +493,19 @@ const useEditable = ({
         const scrollPosition = gridRef.current.getScrollPosition();
         const cellValue = getValueRef.current(coords);
         const value = initialValue || cellValue || "";
+        const cellPosition = getCellPosition(pos, scrollPosition);
+
+        /**
+         * Set max editor ref based on grid container
+         */
+        const {
+          containerWidth,
+          containerHeight,
+        } = gridRef.current.getDimensions();
+        maxEditorDimensionsRef.current = {
+          height: containerHeight - cellPosition.y,
+          width: containerWidth - cellPosition.x,
+        };
 
         /**
          * If the user has entered a value in the cell, mark it as dirty
@@ -500,7 +518,7 @@ const useEditable = ({
         setValue(value);
         onChange?.(value, coords);
         setAutoFocus(autoFocus);
-        setPosition(getCellPosition(pos, scrollPosition));
+        setPosition(cellPosition);
         showEditor();
       }
     },
@@ -821,6 +839,8 @@ const useEditable = ({
         nextFocusableCell={nextFocusableCell}
         onBlur={handleBlur}
         onKeyDown={onKeyDown}
+        maxWidth={maxEditorDimensionsRef.current?.width}
+        maxHeight={maxEditorDimensionsRef.current?.height}
       />
     ) : null;
 
