@@ -421,7 +421,7 @@ const DefaultEditor: React.FC<EditorProps> = (props) => {
   );
 };
 
-const getDefaultEditor = (cell: CellInterface | null) => DefaultEditor;
+export const getDefaultEditor = (cell: CellInterface | null) => DefaultEditor;
 const defaultCanEdit = (cell: CellInterface) => true;
 const defaultIsHidden = (i: number) => false;
 
