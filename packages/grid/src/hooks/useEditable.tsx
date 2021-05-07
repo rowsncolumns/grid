@@ -122,7 +122,15 @@ export interface UseEditableOptions {
       HTMLInputElement | HTMLTextAreaElement | HTMLDivElement
     >
   ) => void;
+  /**
+   * Sync callback before a cell is edited
+   */
   onBeforeEdit?: (coords: CellInterface) => void;
+  /**
+   * If true, Once the editor is active, it will be always visible.
+   * Editor will not scroll with the grid
+   */
+  sticky?: boolean;
 }
 
 export interface EditableResults {
@@ -239,7 +247,7 @@ export interface EditorProps {
   /**
    * Scroll position of the grid
    */
-  scrollPosition?: ScrollCoords;
+  scrollPosition: ScrollCoords;
   /**
    * Next cell that should receive focus
    */
@@ -263,6 +271,26 @@ export interface EditorProps {
    * Max editor width
    */
   maxWidth?: string | number;
+  /**
+   * Max editor height
+   */
+  maxHeight?: string | number;
+  /**
+   * Indicates if the cell is part of frozen row
+   */
+  isFrozenRow?: boolean;
+  /**
+   * Indicates if the cell is part of frozen column
+   */
+  isFrozenColumn?: boolean;
+  /**
+   * Frozen row offset
+   */
+  frozenRowOffset?: number;
+  /**
+   * Frozen column offset
+   */
+  frozenColumnOffset?: number;
 }
 
 /**
@@ -281,16 +309,23 @@ const DefaultEditor: React.FC<EditorProps> = (props) => {
     activeCell,
     autoFocus = true,
     onKeyDown,
+    selections,
+    scrollPosition,
+    maxWidth,
+    maxHeight,
+    isFrozenRow,
+    isFrozenColumn,
+    frozenRowOffset,
+    frozenColumnOffset,
     ...rest
   } = props;
   const borderWidth = 2;
   const padding = 10; /* 2 + 1 + 1 + 2 + 2 */
-  const textSizer = useRef(autoSizerCanvas);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const { x = 0, y = 0, width = 0, height = 0 } = position;
   const getWidth = useCallback(
     (text) => {
-      const textWidth = textSizer.current.measureText(text)?.width || 0;
+      const textWidth = autoSizerCanvas.measureText(text)?.width || 0;
       return Math.max(textWidth + padding, width + borderWidth / 2);
     },
     [width]
@@ -419,6 +454,7 @@ const useEditable = ({
   editorProps,
   onBeforeEdit,
   onKeyDown,
+  sticky = false,
 }: UseEditableOptions): EditableResults => {
   const [isEditorShown, setShowEditor] = useState<boolean>(false);
   const [value, setValue] = useState<string>("");
@@ -476,7 +512,9 @@ const useEditable = ({
       coords = gridRef.current.getActualCellCoords(coords);
 
       /* Check if its the same cell */
-      if (isEqualCells(coords, currentActiveCellRef.current)) return;
+      if (isEqualCells(coords, currentActiveCellRef.current)) {
+        return;
+      }
 
       /* Call on before edit */
       if (canEdit(coords)) {
@@ -493,8 +531,13 @@ const useEditable = ({
         const scrollPosition = gridRef.current.getScrollPosition();
         const cellValue = getValueRef.current(coords);
         const value = initialValue || cellValue || "";
-        const cellPosition = getCellPosition(pos, scrollPosition);
-
+        const cellPosition = sticky
+          ? // Editor is rendered outside the <Grid /> component
+            // If the user has scrolled down, and then activate the editor, we will need to adjust the position
+            // of the sticky editor accordingly
+            // Subsequent scroll events has no effect, cos of sticky option
+            getCellPosition(pos, scrollPosition)
+          : pos;
         /**
          * Set max editor ref based on grid container
          */
@@ -503,8 +546,8 @@ const useEditable = ({
           containerHeight,
         } = gridRef.current.getDimensions();
         maxEditorDimensionsRef.current = {
-          height: containerHeight - cellPosition.y,
-          width: containerWidth - cellPosition.x,
+          height: containerHeight - (cellPosition.y ?? 0),
+          width: containerWidth - (cellPosition.x ?? 0),
         };
 
         /**
@@ -518,12 +561,21 @@ const useEditable = ({
         setValue(value);
         onChange?.(value, coords);
         setAutoFocus(autoFocus);
+        setScrollPosition(scrollPosition);
         setPosition(cellPosition);
         showEditor();
       }
     },
-    [frozenRows, frozenColumns, onBeforeEdit, canEdit]
+    [frozenRows, frozenColumns, onBeforeEdit, canEdit, sticky]
   );
+
+  /* Frozen flags */
+  const isFrozenRow =
+    currentActiveCellRef.current &&
+    currentActiveCellRef.current?.rowIndex < frozenRows;
+  const isFrozenColumn =
+    currentActiveCellRef.current &&
+    currentActiveCellRef.current?.columnIndex < frozenColumns;
 
   /**
    * Get current cell position based on scroll position
@@ -535,9 +587,6 @@ const useEditable = ({
     scrollPosition: ScrollCoords
   ) => {
     if (!currentActiveCellRef.current) return { x: 0, y: 0 };
-    const isFrozenRow = currentActiveCellRef.current?.rowIndex < frozenRows;
-    const isFrozenColumn =
-      currentActiveCellRef.current?.columnIndex < frozenColumns;
     return {
       ...position,
       x:
@@ -821,6 +870,29 @@ const useEditable = ({
     }
   }, []);
 
+  const finalCellPosition = useMemo(() => {
+    /**
+     * Since the editor is sticky,
+     * we dont need to adjust the position,
+     * as scrollposition wont move the editor
+     *
+     * When the editor is first active, in makeEditable,
+     * we accomodate for the initial scrollPosition
+     */
+    if (sticky) {
+      return position;
+    }
+    /**
+     * If editor is not sticky, keep adjusting
+     * its position to accomodate for scroll
+     */
+    return getCellPosition(position, scrollPosition);
+  }, [sticky, position, scrollPosition, frozenColumns, frozenRows]);
+
+  /* Get offset of frozen rows and columns */
+  const frozenRowOffset = gridRef.current?.getRowOffset(frozenRows);
+  const frozenColumnOffset = gridRef.current?.getColumnOffset(frozenColumns);
+
   const editorComponent =
     isEditorShown && Editor ? (
       <Editor
@@ -834,13 +906,17 @@ const useEditable = ({
         onChange={handleChange}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
-        position={position}
+        position={finalCellPosition}
         scrollPosition={scrollPosition}
         nextFocusableCell={nextFocusableCell}
         onBlur={handleBlur}
         onKeyDown={onKeyDown}
         maxWidth={maxEditorDimensionsRef.current?.width}
         maxHeight={maxEditorDimensionsRef.current?.height}
+        isFrozenRow={isFrozenRow}
+        isFrozenColumn={isFrozenColumn}
+        frozenRowOffset={frozenRowOffset}
+        frozenColumnOffset={frozenColumnOffset}
       />
     ) : null;
 

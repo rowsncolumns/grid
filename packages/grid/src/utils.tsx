@@ -124,6 +124,7 @@ export const createHTMLBox = ({
   borderCoverWidth = 5,
   type,
   bounds,
+  activeCell,
   ...props
 }: SelectionProps) => {
   const lineStyles: Partial<React.CSSProperties> = {
