@@ -4,7 +4,7 @@ import Grid, {
   Cell,
   useEditable,
   useSelection,
-  useAutoSizer,
+  useSizer as useAutoSizer,
 } from "@rowsncolumns/grid";
 import create from "zustand";
 
