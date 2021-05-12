@@ -588,6 +588,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
     });
     const stageRef = useRef<Konva.Stage>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
     const verticalScrollRef = useRef<HTMLDivElement>(null);
     const wheelingRef = useRef<number | null>(null);
     const horizontalScrollRef = useRef<HTMLDivElement>(null);
@@ -680,12 +681,12 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
      * Handle mouse wheeel
      */
     useEffect(() => {
-      containerRef.current?.addEventListener("wheel", handleWheel, {
+      scrollContainerRef.current?.addEventListener("wheel", handleWheel, {
         passive: false,
       });
       isMounted.current = true;
       return () => {
-        containerRef.current?.removeEventListener("wheel", handleWheel);
+        scrollContainerRef.current?.removeEventListener("wheel", handleWheel);
       };
     }, []);
 
@@ -2584,6 +2585,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
           userSelect: "none",
         }}
         className="rowsncolumns-grid"
+        ref={scrollContainerRef}
       >
         <div
           className="rowsncolumns-grid-container"
