@@ -1187,6 +1187,8 @@ export const EditableGrid: React.FC = () => {
         },
       }
     );
+    const rowHeight = useCallback(() => 20, []);
+    const columnWidth = useCallback(() => 100, []);
     return (
       <div style={{ position: "relative" }}>
         <Grid
@@ -1199,9 +1201,7 @@ export const EditableGrid: React.FC = () => {
           ref={gridRef}
           activeCell={activeCell}
           selections={selections}
-          columnWidth={(index) => {
-            return 100;
-          }}
+          columnWidth={columnWidth}
           showFillHandle={!isEditInProgress}
           itemRenderer={(props) => (
             <DefaultCell
@@ -1210,9 +1210,7 @@ export const EditableGrid: React.FC = () => {
               {...props}
             />
           )}
-          rowHeight={(index) => {
-            return 20;
-          }}
+          rowHeight={rowHeight}
           {...selectionProps}
           {...editableProps}
           {...autoSizerProps}

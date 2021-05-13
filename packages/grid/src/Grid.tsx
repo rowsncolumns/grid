@@ -792,8 +792,14 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
       [mergedCellMap]
     );
 
-    const getVerticalRangeToRender = () => {
-      const frozenRowHeight = getRowOffset(frozenRows);
+    const frozenColumnWidth = getColumnOffset(frozenColumns);
+    const frozenRowHeight = getRowOffset(frozenRows);
+    const [
+      rowStartIndex,
+      rowStopIndex,
+      visibleRowStartIndex,
+      visibleRowStopIndex,
+    ] = useMemo(() => {
       const startIndex = getRowStartIndexForOffset({
         rowHeight,
         columnWidth,
@@ -831,10 +837,25 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         startIndex,
         stopIndex,
       ];
-    };
+    }, [
+      rowHeight,
+      columnWidth,
+      rowCount,
+      columnCount,
+      scale,
+      scrollTop,
+      containerHeight,
+      frozenRows,
+      overscanCount,
+      frozenRowHeight,
+    ]);
 
-    const getHorizontalRangeToRender = () => {
-      const frozenColumnWidth = getColumnOffset(frozenColumns);
+    const [
+      columnStartIndex,
+      columnStopIndex,
+      visibleColumnStartIndex,
+      visibleColumnStopIndex,
+    ] = useMemo(() => {
       const startIndex = getColumnStartIndexForOffset({
         rowHeight,
         columnWidth,
@@ -873,20 +894,18 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         startIndex,
         stopIndex,
       ];
-    };
+    }, [
+      rowHeight,
+      columnWidth,
+      rowCount,
+      columnCount,
+      scale,
+      frozenColumns,
+      containerWidth,
+      scrollLeft,
+      frozenColumnWidth,
+    ]);
 
-    const [
-      rowStartIndex,
-      rowStopIndex,
-      visibleRowStartIndex,
-      visibleRowStopIndex,
-    ] = getVerticalRangeToRender();
-    const [
-      columnStartIndex,
-      columnStopIndex,
-      visibleColumnStartIndex,
-      visibleColumnStopIndex,
-    ] = getHorizontalRangeToRender();
     const estimatedTotalHeight = getEstimatedTotalHeight(
       rowCount,
       instanceProps.current
@@ -1019,8 +1038,6 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
     }, [snap]);
 
     /* Find frozen column boundary */
-    const frozenColumnWidth = getColumnOffset(frozenColumns);
-    const frozenRowHeight = getRowOffset(frozenRows);
     const isWithinFrozenColumnBoundary = useCallback(
       (x: number) => {
         return frozenColumns > 0 && x < frozenColumnWidth;
