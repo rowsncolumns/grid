@@ -801,6 +801,14 @@ const useEditable = ({
     focusGrid();
   };
 
+  /* When the input is blurred out */
+  const handleCancel = (e?: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    hideEditor();
+    onCancel && onCancel(e);
+    /* Keep the focus back in the grid */
+    focusGrid();
+  };
+
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       /* Persistent input, hides only during Enter key or during submit or cancel calls */
@@ -816,7 +824,7 @@ const useEditable = ({
       }
       initialActiveCell.current = undefined;
     },
-    [hideOnBlur]
+    [hideOnBlur, handleSubmit, handleCancel]
   );
 
   const handleChange = useCallback(
@@ -841,14 +849,6 @@ const useEditable = ({
     },
     [value]
   );
-
-  /* When the input is blurred out */
-  const handleCancel = (e?: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    hideEditor();
-    onCancel && onCancel(e);
-    /* Keep the focus back in the grid */
-    focusGrid();
-  };
 
   const handleScroll = useCallback((scrollPos: ScrollCoords) => {
     if (!currentActiveCellRef.current) return;
