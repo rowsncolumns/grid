@@ -678,7 +678,7 @@ const useEditable = ({
       /* Prevent the first keystroke */
       e.preventDefault();
     },
-    [getValue, selections, activeCell]
+    [getValue, selections, activeCell, onDelete]
   );
 
   /**
