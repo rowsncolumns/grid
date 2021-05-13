@@ -786,28 +786,32 @@ const useEditable = ({
     value: React.ReactText,
     activeCell: CellInterface,
     nextActiveCell?: CellInterface | null
-  ) => {
-    /**
-     * Hide the editor first, so that we can handle onBlur events
-     * 1. Editor hides -> Submit
-     * 2. If user clicks outside the grid, onBlur is called, if there is a activeCell, we do another submit
-     */
-    hideEditor();
+  ) =>
+    useCallback(() => {
+      /**
+       * Hide the editor first, so that we can handle onBlur events
+       * 1. Editor hides -> Submit
+       * 2. If user clicks outside the grid, onBlur is called, if there is a activeCell, we do another submit
+       */
+      hideEditor();
 
-    /* Save the new value */
-    onSubmit && onSubmit(value, activeCell, nextActiveCell);
+      /* Save the new value */
+      onSubmit && onSubmit(value, activeCell, nextActiveCell);
 
-    /* Keep the focus */
-    focusGrid();
-  };
+      /* Keep the focus */
+      focusGrid();
+    }, [onSubmit]);
 
   /* When the input is blurred out */
-  const handleCancel = (e?: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    hideEditor();
-    onCancel && onCancel(e);
-    /* Keep the focus back in the grid */
-    focusGrid();
-  };
+  const handleCancel = useCallback(
+    (e?: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      hideEditor();
+      onCancel && onCancel(e);
+      /* Keep the focus back in the grid */
+      focusGrid();
+    },
+    [onCancel]
+  );
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
