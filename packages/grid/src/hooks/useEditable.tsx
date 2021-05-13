@@ -782,12 +782,12 @@ const useEditable = ({
   );
 
   /* Save the value */
-  const handleSubmit = (
-    value: React.ReactText,
-    activeCell: CellInterface,
-    nextActiveCell?: CellInterface | null
-  ) =>
-    useCallback(() => {
+  const handleSubmit = useCallback(
+    (
+      value: React.ReactText,
+      activeCell: CellInterface,
+      nextActiveCell?: CellInterface | null
+    ) => {
       /**
        * Hide the editor first, so that we can handle onBlur events
        * 1. Editor hides -> Submit
@@ -800,7 +800,9 @@ const useEditable = ({
 
       /* Keep the focus */
       focusGrid();
-    }, [onSubmit]);
+    },
+    [onSubmit]
+  );
 
   /* When the input is blurred out */
   const handleCancel = useCallback(
