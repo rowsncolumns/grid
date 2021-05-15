@@ -608,7 +608,7 @@ const useSelection = ({
     const coords = gridRef.current.getCellCoordsFromOffset(
       e.clientX,
       e.clientY,
-      false
+      true
     );
 
     if (!coords) return;

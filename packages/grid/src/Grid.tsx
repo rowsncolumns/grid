@@ -1349,15 +1349,17 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         { rowIndex, columnIndex }: OptionalCellInterface,
         align: Align = Align.smart
       ) => {
-        const isFrozenRow = rowIndex && rowIndex < frozenRows;
-        const isFrozenColumn = columnIndex && columnIndex < frozenColumns;
+        const isFrozenRow = rowIndex !== void 0 && rowIndex < frozenRows;
+        const isFrozenColumn =
+          columnIndex !== void 0 && columnIndex < frozenColumns;
         const frozenColumnOffset = getColumnOffset(frozenColumns);
         /* Making sure getColumnWidth works */
-        const x = columnIndex ? getColumnOffset(columnIndex) : void 0;
+        const x =
+          columnIndex !== void 0 ? getColumnOffset(columnIndex) : void 0;
         /* Making sure getRowHeight works */
-        const y = rowIndex ? getRowOffset(rowIndex) : void 0;
-        const width = columnIndex ? getColumnWidth(columnIndex) : 0;
-        const height = rowIndex ? getRowHeight(rowIndex) : 0;
+        const y = rowIndex !== void 0 ? getRowOffset(rowIndex) : void 0;
+        const width = columnIndex !== void 0 ? getColumnWidth(columnIndex) : 0;
+        const height = rowIndex !== void 0 ? getRowHeight(rowIndex) : 0;
         const columnAlign = width > containerWidth ? Align.start : align;
         const rowAlign = height > containerHeight ? Align.start : align;
         const newScrollLeft =
