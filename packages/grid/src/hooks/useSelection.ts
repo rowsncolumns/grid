@@ -607,8 +607,7 @@ const useSelection = ({
 
     const coords = gridRef.current.getCellCoordsFromOffset(
       e.clientX,
-      e.clientY,
-      true
+      e.clientY
     );
 
     if (!coords) return;
@@ -1285,7 +1284,8 @@ const useSelection = ({
       }
       let coords = gridRef.current.getCellCoordsFromOffset(
         e.nativeEvent.clientX,
-        e.nativeEvent.clientY
+        e.nativeEvent.clientY,
+        false // Todo
       );
       if (!coords) {
         return;
