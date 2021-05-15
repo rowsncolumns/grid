@@ -16,6 +16,6 @@ jobs:
       - run: yarn
       - run: yarn build
       - run: yarn test
-      - run: yarn workspace @rowsncolumns/storybook run deploy-storybook
+      - run: yarn workspace @rowsncolumns/storybook run deploy-storybook -- --ci --host-token-env-variable=GITHUB_TOKEN
         env:
           CI: true
