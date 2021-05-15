@@ -934,6 +934,49 @@ export const extendAreaToMergedCells = (
   return area;
 };
 
+/**
+ * Convert 2 cells to bounds
+ * @param start
+ * @param end
+ * @returns
+ */
+export const cellRangeToBounds = (
+  start: CellInterface,
+  end: CellInterface,
+  spanMerges: boolean = true,
+  getCellBounds: (cell: CellInterface) => AreaProps
+) => {
+  let top = Math.min(start.rowIndex, end.rowIndex);
+  let bottom = Math.max(start.rowIndex, end.rowIndex);
+  let left = Math.min(start.columnIndex, end.columnIndex);
+  let right = Math.max(start.columnIndex, end.columnIndex);
+
+  if (spanMerges) {
+    for (let columnIndex = left; columnIndex <= right; columnIndex++) {
+      const topCell = getCellBounds({ rowIndex: top, columnIndex });
+      const bottomCell = getCellBounds({ rowIndex: bottom, columnIndex });
+      bottom = Math.max(topCell?.bottom, bottomCell?.bottom, bottom);
+      top = Math.min(topCell?.top, bottomCell?.top, top);
+    }
+    for (let rowIndex = top; rowIndex <= bottom; rowIndex++) {
+      const topCell = getCellBounds({ rowIndex, columnIndex: left });
+      const bottomCell = getCellBounds({ rowIndex, columnIndex: right });
+      right = Math.max(topCell?.right, bottomCell?.right, right);
+      left = Math.min(topCell?.left, bottomCell?.left, left);
+    }
+  }
+
+  return {
+    top,
+    left,
+    right,
+    bottom,
+  };
+};
+
+/**
+ * Check if its being rendered in Browser or SSR
+ */
 export const canUseDOM = !!(
   typeof window !== "undefined" &&
   window.document &&

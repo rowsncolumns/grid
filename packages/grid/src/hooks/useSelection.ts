@@ -12,15 +12,14 @@ import {
   Align,
   getBoundedCells,
   cellIdentifier,
-  extendAreaToMergedCells,
   isEqualCells,
   clampIndex,
   HiddenType,
   findNextCellInDataRegion,
-  selectionFromActiveCell,
   selectionSpansCells,
   newSelectionFromDrag,
   clampCellCoords,
+  cellRangeToBounds,
 } from "./../helpers";
 import {
   KeyCodes,
@@ -334,24 +333,16 @@ const useSelection = ({
    * selection object from start, end
    * @param start
    * @param end
-   *
-   * TODO
-   * Cater to Merged cells
    */
   const selectionFromStartEnd = (start: CellInterface, end: CellInterface) => {
     if (!gridRef?.current) return null;
     const spanMerges = canSelectionSpanMergedCells?.(start, end);
-    const boundsStart = gridRef.current.getCellBounds(start, spanMerges);
-    const boundsEnd = gridRef.current.getCellBounds(end, spanMerges);
-    const bounds = {
-      top: Math.min(boundsStart.top, boundsEnd.top),
-      bottom: Math.max(boundsStart.bottom, boundsEnd.bottom),
-      left: Math.min(boundsStart.left, boundsEnd.left),
-      right: Math.max(boundsStart.right, boundsEnd.right),
-    };
-    return spanMerges
-      ? extendAreaToMergedCells(bounds, mergedCellsRef.current)
-      : bounds;
+    return cellRangeToBounds(
+      start,
+      end,
+      spanMerges,
+      gridRef.current.getCellBounds
+    );
   };
 
   /* Modify current selection */
