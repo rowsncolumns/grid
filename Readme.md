@@ -2,7 +2,7 @@
 
 React Components for Tabular data.
 
-[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![Build Status](https://travis-ci.org/rowsncolumns/grid.svg?branch=master)](https://travis-ci.org/rowsncolumns/grid)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![Build Status](https://travis-ci.com/rowsncolumns/grid.svg?branch=master)](https://travis-ci.com/rowsncolumns/grid)
 
 
 This monorepo contains
