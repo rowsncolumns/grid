@@ -939,6 +939,8 @@ export const extendAreaToMergedCells = (
  * @param start
  * @param end
  * @returns
+ *
+ * 2 loops O(n)
  */
 export const cellRangeToBounds = (
   start: CellInterface,
@@ -950,19 +952,30 @@ export const cellRangeToBounds = (
   let bottom = Math.max(start.rowIndex, end.rowIndex);
   let left = Math.min(start.columnIndex, end.columnIndex);
   let right = Math.max(start.columnIndex, end.columnIndex);
+  /**
+   * The idea is that
+   * We do 2 loops >
+   * Left to Right and then top to bottom
+   *  => Find top cell and bottom cell and check
+   * if there are any merged cells at the edge
+   * Then keep extending our top and bottom bounds accordingly
+   *
+   * Same goes for Top to bottom
+   *  => Find left most and right most cells
+   */
 
   if (spanMerges) {
     for (let columnIndex = left; columnIndex <= right; columnIndex++) {
       const topCell = getCellBounds({ rowIndex: top, columnIndex });
       const bottomCell = getCellBounds({ rowIndex: bottom, columnIndex });
-      bottom = Math.max(topCell?.bottom, bottomCell?.bottom, bottom);
-      top = Math.min(topCell?.top, bottomCell?.top, top);
+      bottom = Math.max(topCell.bottom, bottomCell.bottom, bottom);
+      top = Math.min(topCell.top, bottomCell.top, top);
     }
     for (let rowIndex = top; rowIndex <= bottom; rowIndex++) {
       const topCell = getCellBounds({ rowIndex, columnIndex: left });
       const bottomCell = getCellBounds({ rowIndex, columnIndex: right });
-      right = Math.max(topCell?.right, bottomCell?.right, right);
-      left = Math.min(topCell?.left, bottomCell?.left, left);
+      right = Math.max(topCell.right, bottomCell.right, right);
+      left = Math.min(topCell.left, bottomCell.left, left);
     }
   }
 
