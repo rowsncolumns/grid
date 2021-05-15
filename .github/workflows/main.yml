@@ -4,7 +4,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      GH_TOKEN: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         node-version: [12.x]
