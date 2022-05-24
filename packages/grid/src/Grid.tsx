@@ -1638,11 +1638,11 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
 
     const mergedCellRenderMap = new Set();
     /* Draw all cells */
-    const cells: React.ReactNodeArray = [];
+    const cells: React.ReactNode[] = [];
     /**
      * Lets users draw cells on top of existing canvas
      */
-    const cellOverlays: React.ReactNodeArray = [];
+    const cellOverlays: React.ReactNode[] = [];
 
     if (columnCount > 0 && rowCount) {
       for (let rowIndex = rowStartIndex; rowIndex <= rowStopIndex; rowIndex++) {
@@ -1770,7 +1770,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
 
     /* Draw frozen rows */
     const frozenRowCells = [];
-    const frozenRowCellOverlays: React.ReactNodeArray = [];
+    const frozenRowCellOverlays: React.ReactNode[] = [];
     for (
       let rowIndex = 0;
       rowIndex < Math.min(rowStopIndex, frozenRows);
