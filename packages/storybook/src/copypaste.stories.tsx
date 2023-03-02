@@ -59,7 +59,12 @@ export const Default = () => {
         const changes = {};
         for (const [i, row] of rows.entries()) {
           for (const [j, cell] of row.entries()) {
-            changes[[rowIndex + i, columnIndex + j]] = cell;
+            changes[[rowIndex + i, columnIndex + j]] =
+              cell instanceof Object
+                ? "text" in cell
+                  ? cell.text
+                  : null
+                : cell;
           }
         }
         setData((prev) => ({ ...prev, ...changes }));
