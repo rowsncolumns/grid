@@ -5,13 +5,25 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "storybook": "start-storybook -p 9002 -s ./public",
-    "build-storybook": "build-storybook -c .storybook -o .out",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -c .storybook -o .out",
     "deploy-storybook": "storybook-to-ghpages",
     "postpublish": "yarn deploy-storybook"
   },
   "dependencies": {
     "@rowsncolumns/grid": "^8.0.8",
+    "konva": "^8.4.2",
+    "react-konva": "^18.2.5",
     "react-use": "^15.3.8"
+  },
+  "devDependencies": {
+    "@storybook/blocks": "^7.0.0-alpha.8",
+    "@storybook/react": "^7.0.0-beta.59",
+    "@storybook/react-webpack5": "^7.0.0-beta.59",
+    "@storybook/storybook-deployer": "^2.8.16",
+    "@storybook/testing-library": "^0.0.14-next.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^7.0.0-beta.59"
   }
 }

@@ -8,11 +8,11 @@
     "start": "parcel index.html"
   },
   "dependencies": {
-    "@rowsncolumns/grid": "^6.2.17",
+    "@rowsncolumns/grid": "file:../../packages/grid",
     "namor": "^2.0.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-table": "^7.1.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-table": "^7.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.1",

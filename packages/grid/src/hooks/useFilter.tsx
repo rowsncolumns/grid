@@ -150,7 +150,7 @@ const useFilter = ({
       const isFrozenRow = coords.rowIndex < frozenRows;
 
       /* Set cell position */
-      setPosition((prev) => {
+      setPosition(() => {
         const left = pos.x as number;
         const top = pos.y as number;
         const cellWidth = pos.width as number;

@@ -1,9 +1,9 @@
 import React from "react";
-import { ShapeConfig } from "konva/types/Shape";
+import { ShapeConfig } from "konva/lib/Shape";
 import { Line } from "react-konva";
 
 const GridLine: React.FC<ShapeConfig> = (props) => {
-  const { points, stroke, strokeWidth, offsetY, offsetX } = props
+  const { points, stroke, strokeWidth, offsetY, offsetX } = props;
   return (
     <Line
       points={points}
@@ -17,7 +17,7 @@ const GridLine: React.FC<ShapeConfig> = (props) => {
       listening={false}
       perfectDrawEnabled={false}
     />
-  )
+  );
 };
 
 export default GridLine;

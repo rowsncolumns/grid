@@ -1,12 +1,6 @@
 // @ts-nocheck
 import React, { useRef, useState, useCallback } from "react";
-import Grid, {
-  IChildrenProps,
-  Cell,
-  useSelection,
-  useEditable,
-} from "@rowsncolumns/grid";
-import { useMeasure } from "react-use";
+import Grid, { IChildrenProps, Cell, useSelection } from "@rowsncolumns/grid";
 import { Rect, Text, Group, RegularPolygon } from "react-konva";
 
 export default {

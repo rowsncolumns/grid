@@ -53,12 +53,12 @@ const useTouch = ({ gridRef }: TouchProps): TouchResults => {
 
       const dims = gridRef.current?.getDimensions();
       /* Update dimensions */
-      updateScrollDimensions(dims);
+      if (dims) updateScrollDimensions(dims);
     }
   }, []);
 
   /* Scroll to x, y coordinate */
-  const scrollTo = useCallback(({ scrollLeft, scrollTop }) => {
+  const scrollTo = useCallback(({ scrollLeft, scrollTop }: ScrollCoords) => {
     if (scrollerRef.current)
       scrollerRef.current.scrollTo(scrollLeft, scrollTop);
   }, []);
@@ -73,6 +73,11 @@ const useTouch = ({ gridRef }: TouchProps): TouchResults => {
       containerHeight,
       estimatedTotalWidth,
       estimatedTotalHeight,
+    }: {
+      containerWidth: number;
+      containerHeight: number;
+      estimatedTotalWidth: number;
+      estimatedTotalHeight: number;
     }) => {
       scrollerRef.current.setDimensions(
         containerWidth,
@@ -84,9 +89,12 @@ const useTouch = ({ gridRef }: TouchProps): TouchResults => {
     []
   );
 
-  const handleTouchScroll = useCallback((scrollLeft, scrollTop) => {
-    gridRef.current?.scrollTo({ scrollTop, scrollLeft });
-  }, []);
+  const handleTouchScroll = useCallback(
+    (scrollLeft: number, scrollTop: number) => {
+      gridRef.current?.scrollTo({ scrollTop, scrollLeft });
+    },
+    []
+  );
   const handleTouchStart = useCallback((e: globalThis.TouchEvent) => {
     scrollerRef.current.doTouchStart(e.touches, e.timeStamp);
   }, []);
@@ -94,7 +102,7 @@ const useTouch = ({ gridRef }: TouchProps): TouchResults => {
     e.preventDefault();
     scrollerRef.current.doTouchMove(e.touches, e.timeStamp);
   }, []);
-  const handleTouchEnd = useCallback((e) => {
+  const handleTouchEnd = useCallback((e: globalThis.TouchEvent) => {
     scrollerRef.current.doTouchEnd(e.timeStamp);
   }, []);
 
