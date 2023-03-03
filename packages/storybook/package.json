@@ -1,7 +1,7 @@
 {
   "name": "@rowsncolumns/storybook",
   "private": true,
-  "version": "9.0.3",
+  "version": "9.0.4",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,7 @@
     "postpublish": "yarn deploy-storybook"
   },
   "dependencies": {
-    "@rowsncolumns/grid": "^9.0.2",
+    "@rowsncolumns/grid": "^9.0.3",
     "konva": "^8.4.2",
     "react-konva": "^18.2.5",
     "react-use": "^15.3.8"
