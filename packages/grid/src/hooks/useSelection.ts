@@ -119,7 +119,7 @@ export interface UseSelectionOptions {
   /**
    * Value getter
    */
-  getValue: (cell: CellInterface) => React.ReactText | undefined;
+  getValue: (cell: CellInterface) => string | number | undefined;
   /**
    * New selection mode
    */

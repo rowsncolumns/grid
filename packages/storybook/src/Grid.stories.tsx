@@ -1041,14 +1041,8 @@ export const EditableGrid: React.FC = () => {
   const width = 900;
   const height = 600;
   const SelectEditor: React.FC<EditorProps> = (props) => {
-    const {
-      position,
-      onSubmit,
-      value,
-      cell,
-      nextFocusableCell,
-      onBlur,
-    } = props;
+    const { position, onSubmit, value, cell, nextFocusableCell, onBlur } =
+      props;
     return (
       <div
         style={{
@@ -1097,28 +1091,24 @@ export const EditableGrid: React.FC = () => {
     );
     const frozenRows = 2;
     const frozenColumns = 2;
-    const {
-      activeCell,
-      selections,
-      setActiveCell,
-      ...selectionProps
-    } = useSelection({
-      gridRef,
-      rowCount,
-      columnCount,
-      onFill: (activeCell, fillSelection) => {
-        if (!fillSelection) return;
-        const { bounds } = fillSelection;
-        const changes = {};
-        const value = getCellValue(activeCell);
-        for (let i = bounds.top; i <= bounds.bottom; i++) {
-          for (let j = bounds.left; j <= bounds.right; j++) {
-            changes[[i, j]] = value;
+    const { activeCell, selections, setActiveCell, ...selectionProps } =
+      useSelection({
+        gridRef,
+        rowCount,
+        columnCount,
+        onFill: (activeCell, fillSelection) => {
+          if (!fillSelection) return;
+          const { bounds } = fillSelection;
+          const changes = {};
+          const value = getCellValue(activeCell);
+          for (let i = bounds.top; i <= bounds.bottom; i++) {
+            for (let j = bounds.left; j <= bounds.right; j++) {
+              changes[[i, j]] = value;
+            }
           }
-        }
-        setData((prev) => ({ ...prev, ...changes }));
-      },
-    });
+          setData((prev) => ({ ...prev, ...changes }));
+        },
+      });
     const { getTextMetrics, ...autoSizerProps } = useAutoSizer({
       gridRef,
       getValue: getCellValue,
@@ -1331,10 +1321,8 @@ export const GridWithContextMenu: React.FC = () => {
         <Grid
           ref={gridRef}
           onContextMenu={(e) => {
-            const {
-              rowIndex,
-              columnIndex,
-            } = gridRef.current.getCellCoordsFromOffset(e.clientX, e.clientY);
+            const { rowIndex, columnIndex } =
+              gridRef.current.getCellCoordsFromOffset(e.clientX, e.clientY);
             setContextMenuPosition({
               left: e.clientX + 10,
               top: e.clientY + 10,

@@ -970,11 +970,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
       if (!verticalScrollRef.current || !scrollSnapRefs.current) return;
       if (deltaY !== 0) {
         const direction = deltaY < 0 ? Direction.Up : Direction.Down;
-        const {
-          visibleRowStartIndex,
-          rowCount,
-          isHiddenRow,
-        } = scrollSnapRefs.current;
+        const { visibleRowStartIndex, rowCount, isHiddenRow } =
+          scrollSnapRefs.current;
         let nextRowIndex =
           direction === Direction.Up
             ? // User is scrolling up
@@ -994,11 +991,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
     const snapToColumnFn = useCallback(({ deltaX }: SnapColumnProps) => {
       if (!horizontalScrollRef.current || !scrollSnapRefs.current) return;
       if (deltaX !== 0) {
-        const {
-          visibleColumnStartIndex,
-          columnCount,
-          isHiddenColumn,
-        } = scrollSnapRefs.current;
+        const { visibleColumnStartIndex, columnCount, isHiddenColumn } =
+          scrollSnapRefs.current;
         const direction = deltaX < 0 ? Direction.Left : Direction.Right;
         let nextColumnIndex =
           direction === Direction.Left
@@ -1016,9 +1010,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
       }
     }, []);
     const snapToRowThrottler = useRef<({ deltaY }: SnapRowProps) => void>();
-    const snapToColumnThrottler = useRef<
-      ({ deltaX }: SnapColumnProps) => void
-    >();
+    const snapToColumnThrottler =
+      useRef<({ deltaX }: SnapColumnProps) => void>();
 
     /**
      * Register snap throttlers
@@ -2434,9 +2427,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
             clipY={frozenRowHeight}
             clipWidth={containerWidth - frozenColumnWidth}
             clipHeight={containerHeight - frozenRowHeight}
-            key="1"
           >
-            <Group offsetY={scrollTop} offsetX={scrollLeft} key="1">
+            <Group offsetY={scrollTop} offsetX={scrollLeft}>
               {gridLines}
               {cells}
               {cellOverlays}
@@ -2609,7 +2601,6 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
         }}
         className="rowsncolumns-grid"
         ref={scrollContainerRef}
-        key="123"
       >
         <div
           className="rowsncolumns-grid-container"
