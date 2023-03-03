@@ -2,7 +2,7 @@
   "name": "@rowsncolumns/grid",
   "description": "Declarative React Canvas Grid primitive for Data table, Pivot table, Excel Worksheets",
   "version": "9.0.2",
-  "main": "dist/index.tsx",
+  "main": "dist/index.js",
   "license": "MIT",
   "files": [
     "dist",
