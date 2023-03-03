@@ -8,13 +8,6 @@ describe("usePagination", () => {
     expect(typeof usePagination).toBe("function");
   });
 
-  it("throw error if pageSize and total is not provided", () => {
-    const { result } = renderHook(() => usePagination());
-    expect(result.error.message).toBe(
-      "Cannot read properties of undefined (reading 'initialPage')"
-    );
-  });
-
   it("sets initialPage to 1", () => {
     const { result } = renderHook(() => usePagination(options));
     expect(result.current.currentPage).toBe(1);

@@ -80,7 +80,7 @@ const usePagination = (props: PaginationProps): PaginationResults => {
     total = 0,
     onChange,
     component = PaginationComponent,
-  } = props;
+  } = props ?? {};
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const totalPages = Math.ceil(total / pageSize);
   const nextPage = () =>
