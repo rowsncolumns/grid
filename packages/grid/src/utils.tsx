@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { ShapeConfig } from "konva/types/Shape";
+import React from "react";
+import { ShapeConfig } from "konva/lib/Shape";
 import { Line, Rect } from "react-konva";
 import { SelectionProps } from "./Grid";
 

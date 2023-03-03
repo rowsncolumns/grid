@@ -53,7 +53,7 @@ export interface UseEditableOptions {
    * Callback when user submits a value. Use this to update state
    */
   onSubmit?: (
-    value: React.ReactText,
+    value: string,
     activeCell: CellInterface,
     nextActiveCell?: CellInterface | null
   ) => void;
@@ -211,7 +211,7 @@ export interface EditorProps {
   /**
    * Initial value of the cell
    */
-  value?: React.ReactText;
+  value?: string | number;
   /**
    * Callback when a value has changed.
    */
@@ -220,7 +220,7 @@ export interface EditorProps {
    * Callback to submit the value back to data store
    */
   onSubmit?: (
-    value: React.ReactText,
+    value: string | number,
     activeCell: CellInterface,
     nextActiveCell?: CellInterface | null
   ) => void;
@@ -324,7 +324,7 @@ const DefaultEditor: React.FC<EditorProps> = (props) => {
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const { x = 0, y = 0, width = 0, height = 0 } = position;
   const getWidth = useCallback(
-    (text) => {
+    (text: string | number) => {
       const textWidth = autoSizerCanvas.measureText(text)?.width || 0;
       return Math.max(textWidth + padding, width + borderWidth / 2);
     },
@@ -541,10 +541,8 @@ const useEditable = ({
         /**
          * Set max editor ref based on grid container
          */
-        const {
-          containerWidth,
-          containerHeight,
-        } = gridRef.current.getDimensions();
+        const { containerWidth, containerHeight } =
+          gridRef.current.getDimensions();
         maxEditorDimensionsRef.current = {
           height: containerHeight - (cellPosition.y ?? 0),
           width: containerWidth - (cellPosition.x ?? 0),
@@ -784,7 +782,7 @@ const useEditable = ({
   /* Save the value */
   const handleSubmit = useCallback(
     (
-      value: React.ReactText,
+      value: string,
       activeCell: CellInterface,
       nextActiveCell?: CellInterface | null
     ) => {
@@ -834,7 +832,7 @@ const useEditable = ({
   );
 
   const handleChange = useCallback(
-    (newValue: string, activeCell) => {
+    (newValue: string, activeCell: CellInterface) => {
       /**
        * Make sure we dont call onChange if initialValue is set
        * This is to accomodate for editor that fire onChange during initialvalue

@@ -33,16 +33,12 @@ export const Default = () => {
       },
       [data]
     );
-    const {
-      activeCell,
-      selections,
-      setSelections,
-      ...selectionProps
-    } = useSelection({
-      gridRef,
-      columnCount,
-      rowCount,
-    });
+    const { activeCell, selections, setSelections, ...selectionProps } =
+      useSelection({
+        gridRef,
+        columnCount,
+        rowCount,
+      });
 
     const { copy, paste } = useCopyPaste({
       gridRef,
@@ -59,7 +55,7 @@ export const Default = () => {
         const changes = {};
         for (const [i, row] of rows.entries()) {
           for (const [j, cell] of row.entries()) {
-            changes[[rowIndex + i, columnIndex + j]] = cell;
+            changes[[rowIndex + i, columnIndex + j]] = cell.text;
           }
         }
         setData((prev) => ({ ...prev, ...changes }));

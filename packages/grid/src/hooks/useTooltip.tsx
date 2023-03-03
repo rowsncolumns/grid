@@ -149,9 +149,8 @@ const useTooltip = ({
   }, []);
 
   /* Raf throttler */
-  const mouseMoveThrottler = useRef<
-    (e: React.MouseEvent<HTMLElement>) => void
-  >();
+  const mouseMoveThrottler =
+    useRef<(e: React.MouseEvent<HTMLElement>) => void>();
   const mouseLeaveThrottler = useRef<() => void>();
   useEffect(() => {
     mouseMoveThrottler.current = throttle(handleMouseMove, 100);

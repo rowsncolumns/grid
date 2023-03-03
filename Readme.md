@@ -42,7 +42,7 @@ yarn build
 yarn storybook
 ```
 
-And open `http://localhost:9002/` in Chrome
+And open `http://localhost:6006/` in Chrome
 
 All `stories` are located in `packages/storybook` directory
 

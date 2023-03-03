@@ -1063,7 +1063,7 @@ export const AutoSizerCanvas = (defaults: AutoSizerProps = {}) => {
     }
     return { width: Math.ceil(width), height: Math.ceil(height) };
   };
-  const measureText = (text: React.ReactText) =>
+  const measureText = (text: string | number) =>
     getWidthOfLongestText(castToString(text));
   const reset = () => setFont(defaults);
   /* Set font in constructor */
@@ -1139,7 +1139,7 @@ export const clampIndex = (
   return index;
 };
 
-type ValueGetter = (cell: CellInterface) => React.ReactText | undefined;
+type ValueGetter = (cell: CellInterface) => string | number | undefined;
 
 /**
  * Find a cell with content if the current cell is out of the current dataregion

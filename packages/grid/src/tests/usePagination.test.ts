@@ -11,7 +11,7 @@ describe("usePagination", () => {
   it("throw error if pageSize and total is not provided", () => {
     const { result } = renderHook(() => usePagination());
     expect(result.error.message).toBe(
-      "Cannot read property 'initialCurrentPage' of undefined"
+      "Cannot read properties of undefined (reading 'initialCurrentPage')"
     );
   });
 

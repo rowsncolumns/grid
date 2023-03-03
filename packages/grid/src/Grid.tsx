@@ -9,8 +9,9 @@ import React, {
   memo,
   useEffect,
   Key,
+  UIEvent,
 } from "react";
-import { Stage, Layer, Group, Line } from "react-konva/lib/ReactKonvaCore";
+import { Stage, Layer, Group, Line } from "react-konva";
 import {
   getRowStartIndexForOffset,
   getRowStopIndexForStartIndex,
@@ -35,7 +36,7 @@ import {
   clampIndex,
   canUseDOM,
 } from "./helpers";
-import { ShapeConfig } from "konva/types/Shape";
+import type { ShapeConfig } from "konva/lib/Shape";
 import { CellRenderer as defaultItemRenderer } from "./Cell";
 import { CellRenderer as defaultOverlayRenderer } from "./CellOverlay";
 import Selection from "./Selection";
@@ -43,12 +44,12 @@ import FillHandle from "./FillHandle";
 import GridLine from "./GridLine";
 import { createHTMLBox } from "./utils";
 import invariant from "tiny-invariant";
-import { StageConfig } from "konva/types/Stage";
+import type { StageConfig } from "konva/lib/Stage";
 import { Direction } from "./types";
 import Konva from "konva";
 
 export interface GridProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onScroll"> {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onScroll" | "children"> {
   /**
    * Width of the grid
    */
@@ -304,8 +305,10 @@ export interface ScrollState extends ScrollCoords {
 }
 
 export type RenderComponent = React.FC<RendererProps>;
-export interface CellPosition
-  extends Pick<ShapeConfig, "x" | "y" | "width" | "height"> {}
+export interface CellPosition extends Pick<ShapeConfig, "x" | "y"> {
+  width?: ShapeConfig["width"];
+  height?: ShapeConfig["height"];
+}
 export interface RendererProps
   extends CellInterface,
     CellPosition,
@@ -621,7 +624,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
      * Get top offset of rowIndex
      */
     const getRowOffset = useCallback(
-      (index) => {
+      (index: number) => {
         return getRowOffsetHelper({
           index,
           rowHeight,
@@ -637,7 +640,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
      * Get lefft offset of columnIndex
      */
     const getColumnOffset = useCallback(
-      (index) => {
+      (index: number) => {
         return getColumnOffsetHelper({
           index,
           rowHeight,
@@ -653,7 +656,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
      * Get height of rowIndex
      */
     const getRowHeight = useCallback(
-      (index) => {
+      (index: number) => {
         return getRowHeightHelper(index, instanceProps.current);
       },
       [instanceProps.current]
@@ -663,7 +666,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
      * Get height of columNiondex
      */
     const getColumnWidth = useCallback(
-      (index) => {
+      (index: number) => {
         return getColumnWidthHelper(index, instanceProps.current);
       },
       [instanceProps.current]
@@ -967,11 +970,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
       if (!verticalScrollRef.current || !scrollSnapRefs.current) return;
       if (deltaY !== 0) {
         const direction = deltaY < 0 ? Direction.Up : Direction.Down;
-        const {
-          visibleRowStartIndex,
-          rowCount,
-          isHiddenRow,
-        } = scrollSnapRefs.current;
+        const { visibleRowStartIndex, rowCount, isHiddenRow } =
+          scrollSnapRefs.current;
         let nextRowIndex =
           direction === Direction.Up
             ? // User is scrolling up
@@ -991,11 +991,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
     const snapToColumnFn = useCallback(({ deltaX }: SnapColumnProps) => {
       if (!horizontalScrollRef.current || !scrollSnapRefs.current) return;
       if (deltaX !== 0) {
-        const {
-          visibleColumnStartIndex,
-          columnCount,
-          isHiddenColumn,
-        } = scrollSnapRefs.current;
+        const { visibleColumnStartIndex, columnCount, isHiddenColumn } =
+          scrollSnapRefs.current;
         const direction = deltaX < 0 ? Direction.Left : Direction.Right;
         let nextColumnIndex =
           direction === Direction.Left
@@ -1013,9 +1010,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
       }
     }, []);
     const snapToRowThrottler = useRef<({ deltaY }: SnapRowProps) => void>();
-    const snapToColumnThrottler = useRef<
-      ({ deltaX }: SnapColumnProps) => void
-    >();
+    const snapToColumnThrottler =
+      useRef<({ deltaX }: SnapColumnProps) => void>();
 
     /**
      * Register snap throttlers
@@ -1247,8 +1243,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
 
     /* Handle vertical scroll */
     const handleScroll = useCallback(
-      (e) => {
-        const { scrollTop } = e.target;
+      (e: UIEvent<Element>) => {
+        const { scrollTop } = e.currentTarget;
 
         setScrollState((prev) => ({
           ...prev,
@@ -1269,8 +1265,8 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
 
     /* Handle horizontal scroll */
     const handleScrollLeft = useCallback(
-      (e) => {
-        const { scrollLeft } = e.target;
+      (e: UIEvent<Element>) => {
+        const { scrollLeft } = e.currentTarget;
         setScrollState((prev) => ({
           ...prev,
           isScrolling: true,
@@ -1441,7 +1437,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
     /**
      * Fired when user tries to scroll the canvas
      */
-    const handleWheel = useCallback((event: globalThis.MouseWheelEvent) => {
+    const handleWheel = useCallback((event: WheelEvent) => {
       /* If user presses shift key, scroll horizontally */
       const isScrollingHorizontally = event.shiftKey;
 

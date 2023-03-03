@@ -57,7 +57,7 @@ type SupportedType =
   | "text/html"
   | "text/xml";
 
-const defaultGetText = (text: any) => text;
+const defaultGetText = (config: { text: string }) => config.text;
 
 /**
  * Copy paste hook
@@ -134,7 +134,7 @@ const useCopyPaste = ({
             columnIndex: j,
           };
           const config = {
-            ...selectionRef.current.getValue(coords),
+            text: selectionRef.current.getValue(coords),
             sourceCell: coords,
           };
           const value = getText(config);

@@ -14,5 +14,10 @@
     "strictNullChecks": true,
     "sourceMap": true
   },
-  "exclude": ["node_modules", "examples", "packages/website", "packages/storybook"]
+  "exclude": [
+    "node_modules",
+    "examples",
+    "packages/website",
+    "packages/storybook"
+  ]
 }

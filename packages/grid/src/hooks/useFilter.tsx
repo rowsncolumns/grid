@@ -16,13 +16,13 @@ export interface FilterView {
 }
 
 export type Filter = Record<string, FilterDefinition>;
-export type FilterDefinition<T = React.ReactText> = {
+export type FilterDefinition<T = string | number> = {
   condition?: FilterConditionDefinition<T>;
   equals?: T[];
   sort?: SortDirection;
 };
 export type FilterOperators = ContainsTextOperators | DataValidationOperator;
-export type FilterConditionDefinition<T = React.ReactText> = {
+export type FilterConditionDefinition<T = string | number> = {
   operator?: FilterOperators;
   values?: T[];
 };
@@ -150,7 +150,7 @@ const useFilter = ({
       const isFrozenRow = coords.rowIndex < frozenRows;
 
       /* Set cell position */
-      setPosition((prev) => {
+      setPosition(() => {
         const left = pos.x as number;
         const top = pos.y as number;
         const cellWidth = pos.width as number;

@@ -106,7 +106,7 @@ export interface AutoResizerResults {
   /**
    * Text size getter
    */
-  getTextMetrics: (text: React.ReactText) => TextDimensions;
+  getTextMetrics: (text: string | number) => TextDimensions;
 }
 
 export interface TextDimensions {
@@ -194,7 +194,7 @@ const useAutoSizer = ({
     autoSizer.current.setFont({ fontFamily, fontSize, fontWeight, fontStyle });
   }, [fontFamily, fontSize, fontWeight, fontStyle]);
 
-  const getTextMetrics = useCallback((text: React.ReactText) => {
+  const getTextMetrics = useCallback((text: string | number) => {
     return autoSizer.current.measureText(castToString(text) as string);
   }, []);
 

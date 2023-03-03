@@ -1,5 +1,5 @@
 import React from "react";
-import { ShapeConfig } from "konva/types/Shape";
+import { ShapeConfig } from "konva/lib/Shape";
 
 /**
  * Fill handle component
@@ -25,7 +25,7 @@ const FillHandle: React.FC<ShapeConfig> = ({
         border: `${strokeWidth}px ${borderColor} solid`,
         borderRightWidth: 0,
         borderBottomWidth: 0,
-        background: stroke,
+        background: stroke as string,
         cursor: "crosshair",
         pointerEvents: "all",
       }}

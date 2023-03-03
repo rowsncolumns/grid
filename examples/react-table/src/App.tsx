@@ -1,5 +1,10 @@
 import React, { useRef } from "react";
-import Grid, { RendererProps, GridRef, useSelection } from "@rowsncolumns/grid";
+import Grid, {
+  RendererProps,
+  GridRef,
+  useSelection,
+  AreaProps,
+} from "@rowsncolumns/grid";
 import { Group, Rect, Text } from "react-konva";
 import { useTable } from "react-table";
 import makeData from "./makeData";
@@ -58,11 +63,12 @@ export default function App() {
     data,
   });
   const frozenRows = headerGroups.length;
-  const mergedCells = [];
-  const headerCellMap = {};
+  const mergedCells: AreaProps[] = [];
+  const headerCellMap: Record<string, any> = {};
   headerGroups.forEach((headerGroup, rowIdx) => {
     let prevSpan = 0;
     headerGroup.headers.forEach((column, idx) => {
+      // FIXME: this is not working
       const { colSpan } = column.getHeaderProps();
       if (colSpan > 1) {
         mergedCells.push({
@@ -72,9 +78,9 @@ export default function App() {
           bottom: rowIdx,
         });
 
-        headerCellMap[[rowIdx, prevSpan]] = column;
+        headerCellMap[[rowIdx, prevSpan].toString()] = column;
       } else {
-        headerCellMap[[rowIdx, idx]] = column;
+        headerCellMap[[rowIdx, idx].toString()] = column;
       }
       prevSpan += colSpan;
     });
@@ -86,6 +92,11 @@ export default function App() {
     gridRef,
     rowCount,
     columnCount,
+    getValue: ({ rowIndex, columnIndex }) => {
+      const row = rows[rowIndex];
+      const cell = row.cells[columnIndex];
+      return cell.value;
+    },
   });
   return (
     <div className="App">
@@ -101,7 +112,8 @@ export default function App() {
         itemRenderer={(props) => {
           if (props.rowIndex < frozenRows) {
             const value =
-              headerCellMap[[props.rowIndex, props.columnIndex]].Header;
+              headerCellMap[[props.rowIndex, props.columnIndex].toString()]
+                .Header;
             return <Header {...props} value={value} />;
           }
 
@@ -156,7 +168,16 @@ const Cell = ({
   );
 };
 
-const Header = ({ rowIndex, columnIndex, x, y, width, height, key, value }) => {
+const Header = ({
+  rowIndex,
+  columnIndex,
+  x,
+  y,
+  width,
+  height,
+  key,
+  value,
+}: RendererProps) => {
   return (
     <Group key={key}>
       <Rect

@@ -1,13 +1,12 @@
 // @ts-nocheck
 import React from "react";
 import Grid from "../Grid";
+import "konva/lib/shapes/Rect";
 import { Rect } from "react-konva";
-import { render, fireEvent, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 
 describe("Grid", () => {
   let itemRenderer;
-  let rowCount;
-  let columnCount;
   let rowHeight;
   let columnWidth;
 
