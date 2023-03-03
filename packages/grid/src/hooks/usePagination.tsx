@@ -6,9 +6,9 @@ export interface PaginationProps {
    */
   pageSize: number;
   /**
-   * Initial current page index. Start from 1
+   * Initial page index. Start from 1
    */
-  initialCurrentPage?: number;
+  initialPage?: number;
   /**
    * Total number of rows
    */
@@ -75,13 +75,13 @@ export interface PaginationResults {
  */
 const usePagination = (props: PaginationProps): PaginationResults => {
   const {
-    initialCurrentPage = 1,
+    initialPage = 1,
     pageSize = 10,
     total = 0,
     onChange,
     component = PaginationComponent,
   } = props;
-  const [currentPage, setCurrentPage] = useState<number>(initialCurrentPage);
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const totalPages = Math.ceil(total / pageSize);
   const nextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
