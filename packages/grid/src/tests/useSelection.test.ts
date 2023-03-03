@@ -7,7 +7,7 @@ describe("useSelection", () => {
   });
 
   it("sets initialselection to be empty", () => {
-    // @ts-ignore FIXME: ignore for now
+    // @ts-ignore
     const { result } = renderHook(() => useSelection({}));
     expect(result.current.selections).toStrictEqual([]);
   });
@@ -17,7 +17,7 @@ describe("useSelection", () => {
       { bounds: { top: 0, left: 0, right: 0, bottom: 0 } },
     ];
     const { result } = renderHook(() =>
-      // @ts-ignore FIXME: ignore for now
+      // @ts-ignore
       useSelection({
         initialSelections,
       })

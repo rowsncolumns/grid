@@ -25,9 +25,7 @@ const FillHandle: React.FC<ShapeConfig> = ({
         border: `${strokeWidth}px ${borderColor} solid`,
         borderRightWidth: 0,
         borderBottomWidth: 0,
-        // FIXME: ignore this for now
-        // @ts-ignore
-        background: stroke,
+        background: typeof stroke === "string" ? stroke : undefined,
         cursor: "crosshair",
         pointerEvents: "all",
       }}

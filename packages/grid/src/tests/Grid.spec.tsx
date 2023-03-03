@@ -1,14 +1,12 @@
 // @ts-nocheck
 import React from "react";
 import Grid from "../Grid";
-import "konva/lib/shapes/Rect"; // FIXME: why is this needed?
+import "konva/lib/shapes/Rect";
 import { Rect } from "react-konva";
 import { render } from "@testing-library/react";
 
 describe("Grid", () => {
   let itemRenderer;
-  let rowCount;
-  let columnCount;
   let rowHeight;
   let columnWidth;
 

@@ -257,9 +257,8 @@ const useSelection = ({
   const [activeCell, setActiveCell] = useState<CellInterface | null>(
     initialActiveCell
   );
-  const [selections, setSelections] = useState<SelectionArea[]>(
-    initialSelections
-  );
+  const [selections, setSelections] =
+    useState<SelectionArea[]>(initialSelections);
   const [fillSelection, setFillSelection] = useState<SelectionArea | null>(
     null
   );
@@ -543,9 +542,8 @@ const useSelection = ({
           const cellIndex = cellIndexInSelection(coords, selections);
           if (cellIndex !== -1) {
             const newSelection = removeSelectionByIndex(cellIndex);
-            const nextActiveCell = getPossibleActiveCellFromSelections(
-              newSelection
-            );
+            const nextActiveCell =
+              getPossibleActiveCellFromSelections(newSelection);
             if (nextActiveCell !== null) {
               setActiveCell(nextActiveCell);
             }
@@ -908,10 +906,8 @@ const useSelection = ({
   // Page down
   const pageDown = () => {
     if (!activeCell || !gridRef?.current) return;
-    const {
-      visibleRowStartIndex,
-      visibleRowStopIndex,
-    } = gridRef.current.getViewPort();
+    const { visibleRowStartIndex, visibleRowStopIndex } =
+      gridRef.current.getViewPort();
     const pageSize = visibleRowStopIndex - visibleRowStartIndex;
     const rowIndex = Math.min(activeCell.rowIndex + pageSize, rowCount - 1);
     const newActiveCell = {
@@ -926,10 +922,8 @@ const useSelection = ({
   // Page up
   const pageUp = () => {
     if (!activeCell || !gridRef?.current) return;
-    const {
-      visibleRowStartIndex,
-      visibleRowStopIndex,
-    } = gridRef.current.getViewPort();
+    const { visibleRowStartIndex, visibleRowStopIndex } =
+      gridRef.current.getViewPort();
     const pageSize = visibleRowStopIndex - visibleRowStartIndex;
     const rowIndex = Math.max(
       activeCell.rowIndex - pageSize,
@@ -947,10 +941,8 @@ const useSelection = ({
   // Page right
   const pageRight = () => {
     if (!activeCell || !gridRef?.current) return;
-    const {
-      visibleColumnStartIndex,
-      visibleColumnStopIndex,
-    } = gridRef.current.getViewPort();
+    const { visibleColumnStartIndex, visibleColumnStopIndex } =
+      gridRef.current.getViewPort();
     const pageSize = visibleColumnStopIndex - visibleColumnStartIndex;
     const columnIndex = Math.min(
       activeCell.columnIndex + pageSize,
@@ -968,10 +960,8 @@ const useSelection = ({
   // Page left
   const pageLeft = () => {
     if (!activeCell || !gridRef?.current) return;
-    const {
-      visibleColumnStartIndex,
-      visibleColumnStopIndex,
-    } = gridRef.current.getViewPort();
+    const { visibleColumnStartIndex, visibleColumnStopIndex } =
+      gridRef.current.getViewPort();
     const pageSize = visibleColumnStopIndex - visibleColumnStartIndex;
     const columnIndex = Math.max(
       activeCell.columnIndex - pageSize,
