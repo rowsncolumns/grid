@@ -181,7 +181,7 @@ export interface SelectionResults {
    *
    * Fill selections
    */
-  fillSelection: SelectionArea | null;
+  fillSelection: SelectionArea | undefined;
   /**
    * Clears the last selection
    */
@@ -259,14 +259,13 @@ const useSelection = ({
   );
   const [selections, setSelections] =
     useState<SelectionArea[]>(initialSelections);
-  const [fillSelection, setFillSelection] = useState<SelectionArea | null>(
-    null
-  );
+  const [fillSelection, setFillSelection] = useState<SelectionArea>();
   const selectionStart = useRef<CellInterface | null>(null);
   const selectionEnd = useRef<CellInterface | null>(null);
   const isSelecting = useRef<boolean>(false);
   const isFilling = useRef<boolean>(false);
   const firstActiveCell = useRef<CellInterface | null>(null);
+  const fillSelectionRef = useRef<SelectionArea>();
 
   /* Drag drop selection */
   const [_, forceRender] = useReducer((s) => s + 1, 0);
@@ -293,6 +292,9 @@ const useSelection = ({
   useEffect(() => {
     mergedCellsRef.current = mergedCells;
   }, [mergedCells]);
+  useEffect(() => {
+    fillSelectionRef.current = fillSelection;
+  }, [fillSelection]);
 
   /* Check if cell is out of bounds */
   const isCellOutOfBounds = useCallback(
@@ -1106,16 +1108,6 @@ const useSelection = ({
     []
   );
 
-  const handleFillHandleMouseDown = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.stopPropagation();
-      isFilling.current = true;
-      document.addEventListener("mousemove", handleFillHandleMouseMove);
-      document.addEventListener("mouseup", handleFillHandleMouseUp);
-    },
-    [selections]
-  );
-
   /**
    * TODO
    * 1. Fill does not extend to merged cells
@@ -1183,7 +1175,7 @@ const useSelection = ({
       hasSelections &&
       boundsSubsetOfSelection(bounds, selections[0].bounds)
     ) {
-      setFillSelection(null);
+      setFillSelection(undefined);
       return;
     }
 
@@ -1195,55 +1187,66 @@ const useSelection = ({
   /**
    * When user releases mouse on the fill handle
    */
-  const handleFillHandleMouseUp = useCallback((e: globalThis.MouseEvent) => {
-    isFilling.current = false;
+  const handleFillHandleMouseUp = useCallback(
+    (e: globalThis.MouseEvent) => {
+      isFilling.current = false;
 
-    /* Remove listener */
-    document.removeEventListener("mousemove", handleFillHandleMouseMove);
-    document.removeEventListener("mouseup", handleFillHandleMouseUp);
+      /* Remove listener */
+      document.removeEventListener("mousemove", handleFillHandleMouseMove);
+      document.removeEventListener("mouseup", handleFillHandleMouseUp);
 
-    /* Exit early */
-    if (!gridRef || !activeCellRef.current) return;
+      /* Exit early */
+      if (!gridRef || !activeCellRef.current) return;
 
-    /* Update last selection */
-    let fillSelection: SelectionArea | null = null;
+      /* Update last selection */
+      let fillSelection = fillSelectionRef.current;
 
-    setFillSelection((prev) => {
-      fillSelection = prev;
-      return null;
-    });
+      /* Update last selection */
+      setFillSelection(undefined);
 
-    /* Use ref, as we are binding to document */
-    const selections = activeSelectionsRef.current;
-    const activeCell = activeCellRef.current;
-    if (!activeCell || !fillSelection) return;
+      /* Use ref, as we are binding to document */
+      const selections = activeSelectionsRef.current;
+      const activeCell = activeCellRef.current;
+      if (!activeCell || !fillSelection) return;
 
-    const newBounds = (fillSelection as SelectionArea)?.bounds;
-    if (!newBounds) return;
+      const newBounds = (fillSelection as SelectionArea)?.bounds;
+      if (!newBounds) return;
 
-    /* Focus on the grid */
-    gridRef.current?.focus();
+      /* Focus on the grid */
+      gridRef.current?.focus();
 
-    /* Callback */
-    onFill && onFill(activeCell, fillSelection, selections);
+      /* Callback */
+      onFill && onFill(activeCell, fillSelection, selections);
 
-    /* Modify last selection */
-    setSelections((prevSelection) => {
-      const len = prevSelection.length;
-      if (!len) {
-        return [{ bounds: newBounds }];
-      }
-      return prevSelection.map((sel, i) => {
-        if (len - 1 === i) {
-          return {
-            ...sel,
-            bounds: newBounds,
-          };
+      /* Modify last selection */
+      setSelections((prevSelection) => {
+        const len = prevSelection.length;
+        if (!len) {
+          return [{ bounds: newBounds }];
         }
-        return sel;
+        return prevSelection.map((sel, i) => {
+          if (len - 1 === i) {
+            return {
+              ...sel,
+              bounds: newBounds,
+            };
+          }
+          return sel;
+        });
       });
-    });
-  }, []);
+    },
+    [onFill]
+  );
+
+  const handleFillHandleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      isFilling.current = true;
+      document.addEventListener("mousemove", handleFillHandleMouseMove);
+      document.addEventListener("mouseup", handleFillHandleMouseUp);
+    },
+    [handleFillHandleMouseMove, handleFillHandleMouseUp]
+  );
 
   /**
    * Remove the last selection from state

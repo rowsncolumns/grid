@@ -432,7 +432,7 @@ export const BaseGridWithSelection: React.FC = () => {
         rowCount={2000}
         showGridLines
         gridLineColor="gray"
-        showFillHandle={false}
+        showFillHandle={true}
         frozenColumns={1}
         frozenRows={1}
         snap
