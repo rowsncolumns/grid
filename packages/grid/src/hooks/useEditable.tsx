@@ -527,7 +527,14 @@ const useEditable = ({
         currentActiveCellRef.current = coords;
 
         /* Get offsets */
-        const pos = gridRef.current.getCellOffsetFromCoords(coords);
+        const containerOffset =
+          gridRef.current.container?.getBoundingClientRect();
+        const cellPos = gridRef.current.getCellOffsetFromCoords(coords);
+        const pos = {
+          ...cellPos,
+          x: (containerOffset?.x ?? 0) + (cellPos.x ?? 0),
+          y: (containerOffset?.y ?? 0) + (cellPos.y ?? 0),
+        };
         const scrollPosition = gridRef.current.getScrollPosition();
         const cellValue = getValueRef.current(coords);
         const value = initialValue || cellValue || "";
