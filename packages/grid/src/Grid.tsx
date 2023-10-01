@@ -1447,7 +1447,7 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
       /* Scroll natively */
       if (wheelingRef.current) return;
 
-      let dx = isScrollingHorizontally ? deltaY : deltaX;
+      let dx = deltaX;
       let dy = deltaY;
 
       /* Scroll only in one direction */
