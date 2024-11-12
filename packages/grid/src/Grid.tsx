@@ -2194,7 +2194,6 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
                 ? selectionStrokeWidth
                 : 0,
             selection,
-            inProgress,
           })
         );
       }
@@ -2217,7 +2216,6 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
                 ? selectionStrokeWidth
                 : 0,
             selection,
-            inProgress,
           })
         );
       }
@@ -2250,7 +2248,6 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
                 ? selectionStrokeWidth
                 : 0,
             selection,
-            inProgress,
           })
         );
       }
@@ -2264,7 +2261,6 @@ const Grid: React.FC<GridProps & RefAttribute> = memo(
           width: selectionBounds.width,
           height: selectionBounds.height,
           selection,
-          inProgress,
         })
       );
 
